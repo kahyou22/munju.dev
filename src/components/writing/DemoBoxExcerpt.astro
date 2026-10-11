@@ -1,0 +1,15 @@
+---
+// 글 목록 미리보기용 DemoBox: 코드는 빼고 데모만 보여서 목록 페이지를 가볍게 한다.
+---
+
+<div class="demo-box"><slot /></div>
+
+<style>
+  .demo-box {
+    margin: 1.6em 0;
+  }
+
+  .demo-box :global(.demo) {
+    margin: 0;
+  }
+</style>

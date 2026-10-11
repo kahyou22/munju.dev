@@ -1,0 +1,112 @@
+---
+// 데모 아래에 "코드 보기"를 붙여 데모의 실제 소스를 펼쳐 보여준다. 복사 버튼도 있다.
+// MDX:
+//   import KeyboardDemo from "./KeyboardDemo.svelte";
+//   import source from "./KeyboardDemo.svelte?raw";
+//   <DemoBox code={source} file="KeyboardDemo.svelte"><KeyboardDemo client:visible /></DemoBox>
+// 글 목록 미리보기에서는 코드 없이 데모만 보인다. (DemoBoxExcerpt.astro)
+import { Code } from "astro:components";
+import { latencyDark, latencyLight } from "../../lib/shiki-themes.mjs";
+import { roughPath } from "../../lib/rough";
+import { roughAttrs } from "../../lib/rough-decor";
+
+interface Props {
+  code: string;
+  lang?: string;
+  file?: string;
+}
+
+const { code, lang = "svelte", file } = Astro.props;
+const seed = file ?? code.slice(0, 80);
+const chevron = roughPath("M4 2.2 C5.8 3.6 7.2 4.9 8.4 6 C7.1 7.2 5.7 8.5 4.1 9.8", `${seed}:chevron`, { roughness: 0.5, maxRandomnessOffset: 0.6 }).strokes;
+---
+
+<div class="demo-box">
+  <slot />
+  <details class="source">
+    <summary>
+      <svg class="chevron" viewBox="0 0 12 12" aria-hidden="true">{chevron.map((d) => <path d={d} />)}</svg>
+      <span class="when-closed">코드 보기</span>
+      <span class="when-open">코드 접기</span>
+      {file && <span class="file">{file}</span>}
+    </summary>
+    <div class="code" {...roughAttrs({ kind: "box", fill: true, seed: `${seed}:code`, radius: 14 })}>
+      <button class="copy-button" type="button" data-copy-code>복사</button>
+      <Code code={code.trim()} lang={lang as never} themes={{ light: latencyLight, dark: latencyDark }} defaultColor="light" />
+    </div>
+  </details>
+</div>
+
+<style>
+  .demo-box {
+    margin: 1.6em 0;
+  }
+
+  .demo-box :global(.demo) {
+    margin: 0 0 8px;
+  }
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 18px;
+    color: var(--color-link);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .chevron {
+    width: 12px;
+    height: 12px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    transition: transform 0.2s ease-out;
+  }
+
+  details[open] .chevron {
+    transform: rotate(90deg);
+  }
+
+  .when-open,
+  details[open] .when-closed {
+    display: none;
+  }
+
+  details[open] .when-open {
+    display: inline;
+  }
+
+  .file {
+    margin-left: 6px;
+    font-family: var(--font-mono);
+    letter-spacing: normal;
+    font-size: 12px;
+    color: var(--color-faint);
+  }
+
+  /* 코드 영역: 배경과 손그림 테두리는 바깥에 그려서 가로 스크롤해도 따라 움직이지 않는다. */
+  .code {
+    --rough-fill: var(--code-bg);
+    --rough-stroke: var(--color-border-strong);
+    --rough-stroke-width: 1;
+    margin-top: 8px;
+  }
+
+  .code :global(pre) {
+    position: relative;
+    max-height: 460px;
+    margin: 0;
+    padding: 16px 18px;
+    overflow: auto;
+  }
+</style>
