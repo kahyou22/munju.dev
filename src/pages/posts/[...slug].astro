@@ -3,21 +3,24 @@ import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostMeta from "../../components/PostMeta.astro";
 import HandUnderline from "../../components/HandUnderline.astro";
+import HandArrow from "../../components/HandArrow.astro";
 import { fullComponents } from "../../components/mdx";
-import { getPosts, type Post } from "../../lib/posts";
+import { getListedPosts, getPosts, listHref, type Post } from "../../lib/posts";
 import { ogImagePath } from "../../lib/site";
 import "../../styles/prose.css";
 
 export async function getStaticPaths() {
-  const posts = await getPosts();
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const [posts, listed] = await Promise.all([getPosts(), getListedPosts()]);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, backHref: listHref(listed, post.id) } }));
 }
 
 interface Props {
   post: Post;
+  /** 글 목록에서 이 글이 있던 자리 */
+  backHref: string;
 }
 
-const { post } = Astro.props;
+const { post, backHref } = Astro.props;
 const { Content } = await render(post);
 ---
 
@@ -37,6 +40,9 @@ const { Content } = await render(post);
     <div class="prose">
       <Content components={fullComponents} />
     </div>
+    <footer class="post-footer">
+      <a class="back draw-underline" href={backHref}><HandArrow direction="left" seed={`back-${post.id}`} />글 목록으로</a>
+    </footer>
   </article>
 </BaseLayout>
 
@@ -52,6 +58,16 @@ const { Content } = await render(post);
 
   h1 :global([data-vt-title]) {
     view-transition-name: post-title;
+  }
+
+  .post-footer {
+    margin-top: 56px;
+  }
+
+  .back {
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 17px;
   }
 
   h1 {

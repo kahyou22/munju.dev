@@ -1,6 +1,6 @@
 ---
 import PostMeta from "./PostMeta.astro";
-import { postHref, type Post } from "../lib/posts";
+import { listAnchor, postHref, type Post } from "../lib/posts";
 import HandUnderline from "./HandUnderline.astro";
 import HandArrow from "./HandArrow.astro";
 
@@ -12,7 +12,7 @@ const { post } = Astro.props;
 const href = postHref(post.id);
 ---
 
-<article class="preview" data-post-path={href}>
+<article class="preview" id={listAnchor(post.id)} data-post-path={href}>
   <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />
   <h2 class="menu-cursor"><a href={href}><HandUnderline seed={post.id} data-vt-title>{post.data.title}</HandUnderline></a></h2>
   <!-- 미리보기 안에는 데모가 있을 수 있어서, 이 영역 전체를 링크로 감싸지 않는다. -->

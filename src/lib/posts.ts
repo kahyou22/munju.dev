@@ -65,6 +65,22 @@ export function pageHref(page: number): string {
   return page === 1 ? "/" : `/page/${page}/`;
 }
 
+/** 글 목록에서 글 하나를 가리키는 id. 본문 제목의 id와 겹치지 않게 앞에 post-를 붙인다. */
+export function listAnchor(id: string): string {
+  return `post-${id}`;
+}
+
+/**
+ * 글 목록에서 그 글이 있는 자리. 그 글이 있는 목록 페이지로 가서 글 위치까지 내려간다.
+ * 페이지의 첫 글이면 내려가지 않고 맨 위(헤더가 보이는 곳)에 둔다. 목록에 없는 글(일부 공개)은 홈이다.
+ */
+export function listHref(listed: Post[], id: string): string {
+  const index = listed.findIndex((post) => post.id === id);
+  if (index < 0) return pageHref(1);
+  const page = pageHref(Math.floor(index / POSTS_PER_PAGE) + 1);
+  return index % POSTS_PER_PAGE === 0 ? page : `${page}#${listAnchor(id)}`;
+}
+
 /** 태그 페이지 주소. 한글 태그도 그대로 쓴다. (/tags/회고) */
 export function tagHref(tag: string): string {
   return `/tags/${encodeURIComponent(tag)}/`;
