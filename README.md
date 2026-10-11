@@ -29,4 +29,6 @@ npm run build
 npm run preview
 ```
 
+빌드 마지막에 글 목록에 `more` 뒷부분이 새어 들어가지 않았는지 자동으로 검사합니다. 따로 돌릴 때는 `npm run check:leak`을 씁니다.
+
 타입 검사는 `npm run check`(astro check)로 합니다. `.astro` 파일까지 함께 검사합니다.
