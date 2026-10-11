@@ -10,6 +10,28 @@ unlisted: true
 
 {/* more */}
 
+## Callout
+
+팁, 메모, 주의를 상자로 강조한다. `title`을 생략하면 종류 이름이 라벨이 된다.
+
+<Callout type="note">
+  메모 상자. 본문 흐름과 조금 떨어진 이야기를 적을 때 쓴다.
+</Callout>
+
+<Callout type="tip" title="이렇게 하면 편하다">
+  팁 상자. **굵은 글씨**나 `코드`, [링크](https://docs.astro.build)도 그대로 쓸 수 있다.
+</Callout>
+
+<Callout type="warn">
+  주의 상자. 실수하기 쉬운 부분을 알려줄 때 쓴다.
+</Callout>
+
+```mdx
+<Callout type="tip" title="이렇게 하면 편하다">
+  팁 상자. 내용에 마크다운을 그대로 쓸 수 있다.
+</Callout>
+```
+
 ## 코드 블록
 
 언어 뒤에 `title="파일명"`을 쓰면 코드 위에 파일명이 붙는다. 오른쪽 위의 복사 버튼은 모든 코드 블록에 붙는다.

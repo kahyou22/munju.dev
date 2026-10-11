@@ -1,0 +1,112 @@
+---
+// 팁·메모·주의 상자. 손그림 테두리와 손글씨 라벨, 손으로 그린 아이콘.
+// MDX: <Callout type="tip" title="제목(생략 가능)">내용</Callout>
+import { ROUGH_PRESETS, roughPath } from "../../lib/rough";
+import { roughAttrs } from "../../lib/rough-decor";
+
+type CalloutType = "note" | "tip" | "warn";
+
+interface Props {
+  type?: CalloutType;
+  title?: string;
+}
+
+const DEFAULT_TITLE: Record<CalloutType, string> = { note: "메모", tip: "팁", warn: "주의" };
+
+const { type = "note", title = DEFAULT_TITLE[type] } = Astro.props;
+const content = await Astro.slots.render("default");
+
+// 같은 종류의 상자가 여러 개여도 서로 다르게 생기도록 내용으로 모양을 고른다.
+const seed = `${type}:${title}:${content.slice(0, 120)}`;
+
+const ICONS: Record<CalloutType, string> = {
+  note: "M4.5 19.5l1.1-4.4L16.4 4.3a1.6 1.6 0 0 1 2.3 0l1 1a1.6 1.6 0 0 1 0 2.3L8.9 18.4z M14.4 6.3l3.3 3.3",
+  tip: "M9.2 17.6h5.6 M10.2 20.6h3.6 M12 3.4a5.8 5.8 0 0 0-3.5 10.4c.7.6 1 1.3 1 2.1h5c0-.8.4-1.5 1-2.1A5.8 5.8 0 0 0 12 3.4z",
+  warn: "M12 3.8 3 19.4h18.1z M12 9.6v4.4 M12 16.9v.2",
+};
+const icon = roughPath(ICONS[type], `${seed}:icon`, ROUGH_PRESETS.icon).strokes;
+---
+
+<aside class:list={["callout", type]} role="note" {...roughAttrs({ kind: "box", fill: true, seed, radius: 14 })}>
+  <div class="label">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+      {icon.map((d) => <path d={d} />)}
+    </svg>
+    <span>{title}</span>
+  </div>
+  <div class="content" set:html={content} />
+</aside>
+
+<style>
+  .callout {
+    --line: var(--callout-note-line);
+    --bg: var(--callout-note-bg);
+    --label: var(--callout-note-label);
+    /* 안쪽 링크의 밑줄 덮개를 상자 색으로 맞춘다. (global.css의 .draw-underline) */
+    --surface: var(--bg);
+    --dust-cover: var(--dust-cover-note);
+    position: relative;
+    margin: 1.8em 0;
+    padding: 14px 20px 16px;
+  }
+
+  .tip {
+    --line: var(--callout-tip-line);
+    --bg: var(--callout-tip-bg);
+    --label: var(--callout-tip-label);
+    --dust-cover: var(--dust-cover-tip);
+  }
+
+  .warn {
+    --line: var(--callout-warn-line);
+    --bg: var(--callout-warn-bg);
+    --label: var(--callout-warn-label);
+    --dust-cover: var(--dust-cover-warn);
+  }
+
+  /* 배경과 테두리는 rough-decor가 손그림으로 그린다. */
+  .callout {
+    --rough-fill: var(--bg);
+    --rough-stroke: var(--line);
+    --rough-stroke-width: 1.25;
+  }
+
+  .label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--label);
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .content {
+    position: relative;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .content > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  .content > :global(:last-child) {
+    margin-bottom: 0;
+  }
+</style>
