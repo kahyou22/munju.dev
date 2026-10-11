@@ -33,3 +33,43 @@
   background: var(--rough-fill);
   border-radius: 8px;
 }
+
+/*
+ * 손그림 꿈틀거림. 미리 그려 둔 모양 4개(data-frame="0"~"3") 중 평소에는 0번만 보이고,
+ * 조상이 .boiling이거나 .boil-on-hover에 마우스를 올리면 0.14초씩 차례로 바뀐다.
+ * 모양은 빌드할 때(다이어그램, 테마 아이콘, 404 캐릭터) 또는 브라우저에서(데모 상자, rough-action) 그린다.
+ */
+[data-frame]:not([data-frame="0"]) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.boiling, .boil-on-hover:hover) [data-frame] {
+    display: inline;
+    animation: boil 0.56s infinite;
+  }
+
+  /* 음수 지연으로 순서를 엇갈리게 해서, 한 번에 하나씩만 보이게 한다. */
+  :is(.boiling, .boil-on-hover:hover) [data-frame="1"] {
+    animation-delay: -0.42s;
+  }
+
+  :is(.boiling, .boil-on-hover:hover) [data-frame="2"] {
+    animation-delay: -0.28s;
+  }
+
+  :is(.boiling, .boil-on-hover:hover) [data-frame="3"] {
+    animation-delay: -0.14s;
+  }
+}
+
+@keyframes boil {
+  0%,
+  24.9% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
