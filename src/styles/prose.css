@@ -52,6 +52,12 @@
   color: var(--color-title);
 }
 
+/* 본문 링크: 연한 손그림 밑줄이 늘 깔려 있다. 나머지 밑줄 효과는 underline.css의 .draw-underline과 같다. */
+.prose a {
+  --underline-base: var(--link-faint);
+  --underline-pad: 2px;
+}
+
 .prose ul,
 .prose ol {
   margin: 0 0 1.2em;

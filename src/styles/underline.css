@@ -6,6 +6,7 @@
  *   흩어진 끝(--dust-edge)이 평소에는 보이지 않도록 덮개를 그만큼 더 길게 둔다.
  * 층 순서: 늘 깔리는 연한 밑줄(--underline-base, 본문 링크만) / 덮개 / 진한 밑줄(--draw-line)
  * 밑줄 그림과 덮개는 theme-tokens.css에서 온다. (src/lib/rough-images.ts)
+ * 본문 링크(.prose a)는 연한 밑줄이 늘 깔려 있다는 것만 다르다. (prose.css에서 --underline-base를 정한다)
  */
 :root {
   --underline-h: 6px;
@@ -16,7 +17,8 @@
   --dust-cover: var(--dust-cover-page);
 }
 
-.draw-underline {
+.draw-underline,
+.prose a {
   --dust-color: var(--color-link);
   padding-bottom: var(--underline-pad, 3px);
   background:
@@ -28,7 +30,7 @@
   transition: background-size var(--underline-sweep) ease-out;
 }
 
-.draw-underline:is(:hover, :focus-visible) {
+:is(.draw-underline, .prose a):is(:hover, :focus-visible) {
   text-decoration: none;
   background-image: var(--underline-base, none), linear-gradient(var(--surface), var(--surface)), var(--draw-line, var(--link-draw));
   background-position: left bottom, right bottom, left bottom;
@@ -39,7 +41,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .draw-underline {
+  .draw-underline,
+  .prose a {
     transition: none;
   }
 }

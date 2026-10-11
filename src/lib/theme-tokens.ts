@@ -2,11 +2,15 @@
 // /theme-tokens.css로 내보내서 브라우저가 한 번 받아 두고 페이지마다 다시 받지 않는다. (src/pages/theme-tokens.css.ts)
 // - --color-bg, --callout-*-bg: 바탕색. 밑줄 덮개에 같은 색을 구워야 해서 palette.ts에서 온다.
 // - --link-draw / --nav-draw: 마우스를 올리면 그려지는 링크·메뉴 밑줄
+// - --link-faint: 본문 링크에 늘 깔리는 연한 밑줄
 // - --dust-cover-*: 밑줄을 가리는 덮개. 바탕(페이지, 콜아웃 세 종류)마다 하나씩
 // - --menu-cursor: 게임 메뉴처럼 고른 항목 옆에 나타나는 손그림 ▶ (menu-cursor.css)
 import { createHash } from "node:crypto";
 import { palette, type ThemeColors } from "./palette";
 import { DUST_EDGE, dustCover, handLine, menuCursor } from "./rough-images";
+
+/** 본문 링크의 연한 밑줄 조각 너비. 이 크기로 이어 붙인다. (--link-faint-w) */
+export const LINK_FAINT_WIDTH = 160;
 
 function tokens(theme: ThemeColors) {
   return [
@@ -14,6 +18,7 @@ function tokens(theme: ThemeColors) {
     ...Object.entries(theme.callout).map(([type, color]) => `--callout-${type}-bg: ${color};`),
     `--link-draw: ${handLine({ seed: "link-draw", color: theme.link, width: 1200 })};`,
     `--nav-draw: ${handLine({ seed: "nav-draw", color: theme.highlight, width: 1200 })};`,
+    `--link-faint: ${handLine({ seed: "link-faint", color: theme.link, width: LINK_FAINT_WIDTH, strokeWidth: 1.1, opacity: 0.4, repeat: true })};`,
     `--menu-cursor: ${menuCursor({ seed: "menu-cursor", fill: theme.highlight, line: theme.highlightLine })};`,
     `--dust-cover-page: ${dustCover(theme.bg)};`,
     ...Object.entries(theme.callout).map(([type, color]) => `--dust-cover-${type}: ${dustCover(color)};`),
@@ -21,7 +26,7 @@ function tokens(theme: ThemeColors) {
 }
 
 /** 테마와 상관없이 이미지 크기에 맞춰야 하는 값. (underline.css) */
-const sizes = [`--dust-edge: ${DUST_EDGE}px;`].join("\n");
+const sizes = [`--dust-edge: ${DUST_EDGE}px;`, `--link-faint-w: ${LINK_FAINT_WIDTH}px;`].join("\n");
 
 let css: string | undefined;
 
