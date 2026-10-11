@@ -5,6 +5,7 @@ import PostMeta from "../../components/PostMeta.astro";
 import HandUnderline from "../../components/HandUnderline.astro";
 import { fullComponents } from "../../components/mdx";
 import { getPosts, type Post } from "../../lib/posts";
+import { ogImagePath } from "../../lib/site";
 import "../../styles/prose.css";
 
 export async function getStaticPaths() {
@@ -20,7 +21,14 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} published={post.data.date} tags={post.data.tags} noindex={post.data.unlisted}>
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={ogImagePath(post.id)}
+  published={post.data.date}
+  tags={post.data.tags}
+  noindex={post.data.unlisted}
+>
   <article>
     <header class="post-header">
       <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />

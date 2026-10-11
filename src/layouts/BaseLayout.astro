@@ -13,12 +13,14 @@ import WobbleFilters from "../components/WobbleFilters.astro";
 import Rule from "../components/Rule.astro";
 import Header from "../components/Header.astro";
 import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
-import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
+import { AUTHOR, ogImagePath, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
 import { themeTokensVersion } from "../lib/theme-tokens";
 
 interface Props {
   title?: string;
   description?: string;
+  /** 공유 미리보기 이미지 경로. 기본은 사이트 이미지 */
+  image?: string;
   /** 글 페이지면 올린 날짜를 넘긴다. 공유 정보가 article이 된다. */
   published?: Date;
   tags?: string[];
@@ -26,10 +28,11 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION, published, tags = [], noindex = false } = Astro.props;
+const { title, description = SITE_DESCRIPTION, image = ogImagePath(), published, tags = [], noindex = false } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 // 검색 엔진과 공유 미리보기는 절대 주소가 필요하다. (astro.config.mjs의 site)
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
 ---
 
 <!doctype html>
@@ -51,8 +54,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={title ?? SITE_TITLE} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     {published && <meta property="article:published_time" content={published.toISOString()} />}
     {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    <meta name="twitter:card" content="summary_large_image" />
     <!-- 바탕색처럼 이미지에도 구워야 하는 값. 한 번 받아 두고 페이지마다 다시 받지 않는다. (src/lib/theme-tokens.ts) -->
     <link rel="stylesheet" href={`/theme-tokens.css?v=${themeTokensVersion()}`} />
     <script is:inline define:vars={{ key: THEME_STORAGE_KEY, againstKey: THEME_AGAINST_KEY, eventName: THEME_EVENT }}>

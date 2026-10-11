@@ -9,3 +9,8 @@ export const AUTHOR = {
   email: "kahyou222@gmail.com",
   github: "https://github.com/kahyou22",
 };
+
+/** 글의 공유 미리보기 이미지 주소 (src/pages/og) */
+export function ogImagePath(postId?: string): string {
+  return postId ? `/og/posts/${postId}.png` : "/og/site.png";
+}

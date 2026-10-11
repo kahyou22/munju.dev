@@ -31,8 +31,8 @@ export default defineConfig({
   integrations: [
     mdx(),
     svelte(),
-    // 검색 엔진에 싣지 않는 페이지는 빼고 싣는다. (404는 사이트맵이 알아서 뺀다)
-    sitemap({ filter: (page) => !isNoindex(page) }),
+    // 공유 이미지(/og/)와 검색 엔진에 싣지 않는 페이지는 빼고 싣는다. (404는 사이트맵이 알아서 뺀다)
+    sitemap({ filter: (page) => !page.includes('/og/') && !isNoindex(page) }),
   ],
   vite: {
     // 글 목록용 미리보기 모듈(`글.mdx?excerpt`)을 만든다. src/lib/excerpt-vite-plugin.mjs 참고
