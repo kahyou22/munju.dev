@@ -8,7 +8,7 @@ import { EXCERPT_SUFFIX } from "./excerpt-vite-plugin.mjs";
 
 /** @type {import("satteri").MdastPluginInstance & { name: string }} */
 export const moreMarkerPlugin = {
-  name: "kahyou-more-marker",
+  name: "munju-more-marker",
   after(root, ctx) {
     if (ctx.sourceFormat !== "mdx") return;
     const path = ctx.fileURL?.pathname ?? "";

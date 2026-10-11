@@ -17,7 +17,7 @@ const SUFFIX = EXCERPT_SUFFIX;
 
 export function excerptPlugin() {
   return {
-    name: "kahyou-excerpt",
+    name: "munju-excerpt",
     enforce: "pre",
     async resolveId(source, importer) {
       if (!source.endsWith(QUERY)) return;
