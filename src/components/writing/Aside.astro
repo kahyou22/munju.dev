@@ -1,0 +1,77 @@
+---
+// 여백에 적은 손글씨 메모. 넓은 화면에서는 본문 오른쪽 여백에 떠 있고, 좁은 화면에서는 본문 사이에 들어간다.
+// MDX: 메모를 달고 싶은 문단 "바로 앞"에 <Aside>메모</Aside>를 둔다.
+import { between } from "../../lib/hand-drawn";
+import { ROUGH_PRESETS, roughPath } from "../../lib/rough";
+import { roughAttrs } from "../../lib/rough-decor";
+
+const content = await Astro.slots.render("default");
+const style = `--tilt: ${between(content, -2.2, 2.2, "tilt").toFixed(2)}deg`;
+const arrow = roughPath("M38 18 C28 20 16 18 8 9 M6.5 15.5 C6.8 12.6 7.4 10.4 8 8.6 C10.4 9 12.6 9.6 14.8 10.4", `aside-arrow:${content.slice(0, 60)}`, ROUGH_PRESETS.icon).strokes;
+---
+
+<aside class="side-note" style={style} {...roughAttrs({ kind: "left-line", seed: `aside:${content.slice(0, 60)}`, inset: 1 })}>
+  <svg class="arrow" viewBox="0 0 40 24" aria-hidden="true">
+    {arrow.map((d) => <path d={d} />)}
+  </svg>
+  <div class="text" set:html={content} />
+</aside>
+
+<style>
+  .side-note {
+    position: relative;
+    margin: 1.2em 0;
+    padding: 2px 0 2px 16px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+
+  /* 좁은 화면: 왼쪽에 손으로 그은 선 (rough-decor가 그린다) */
+  .side-note {
+    --rough-stroke: var(--color-highlight);
+    --rough-stroke-width: 1.6;
+  }
+
+  .text :global(p) {
+    margin: 0;
+  }
+
+  .arrow {
+    display: none;
+    position: absolute;
+    left: -46px;
+    top: 4px;
+    width: 40px;
+    height: 24px;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* 넓은 화면: 본문 오른쪽 여백에 비스듬히 적힌 메모. 본문 폭은 줄이지 않는다. */
+  @media (min-width: 1240px) {
+    .side-note {
+      float: right;
+      clear: right;
+      width: 190px;
+      margin: 0.3em -250px 0.8em 0;
+      padding: 0;
+      font-size: 17px;
+      transform: rotate(var(--tilt));
+    }
+
+    .side-note > :global(.rough-decor) {
+      display: none;
+    }
+
+    .arrow {
+      display: block;
+    }
+  }
+</style>
