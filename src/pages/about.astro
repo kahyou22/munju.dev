@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Rule from "../components/Rule.astro";
+import { Content as AboutText } from "../content/about.mdx";
+import "../styles/prose.css";
+import { roughAttrs } from "../lib/rough-decor";
+import { AUTHOR } from "../lib/site";
+---
+
+<BaseLayout title="소개" description={`${AUTHOR.name}를 소개합니다`}>
+  <section class="profile">
+    <span class="avatar-wrap" {...roughAttrs({ kind: "ellipse", seed: "avatar", inset: -6, roughness: 1.2 })}>
+      <img class="avatar" src="/avatar.jpg" width="120" height="120" alt="프로필 사진" />
+    </span>
+    <div>
+      <h1>{AUTHOR.name}</h1>
+      <p class="role">{AUTHOR.role}</p>
+      <div class="links">
+        <a class="draw-underline" href={`mailto:${AUTHOR.email}`}>이메일</a>
+        <a class="draw-underline" href={AUTHOR.github}>GitHub</a>
+      </div>
+    </div>
+  </section>
+  <Rule seed="about" class="profile-rule" />
+  <div class="prose">
+    <AboutText />
+  </div>
+</BaseLayout>
+
+<style>
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  :global(.profile-rule) {
+    margin-bottom: 32px;
+  }
+
+  /* 사진 둘레에 손으로 그린 듯한 동그라미 */
+  .avatar-wrap {
+    --rough-stroke: var(--color-highlight);
+    --rough-stroke-width: 1.6;
+    position: relative;
+    flex: none;
+    display: inline-flex;
+  }
+
+  .avatar {
+    border-radius: 50%;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-title);
+  }
+
+  .role {
+    margin: 2px 0 10px;
+    color: var(--color-muted);
+  }
+
+  .links {
+    display: flex;
+    gap: 14px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    .profile {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+    }
+  }
+</style>
