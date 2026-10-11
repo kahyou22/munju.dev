@@ -1,0 +1,14 @@
+// Cloudflare Workers 배포 설정. 사이트가 모두 정적 페이지라서 서버 코드 없이 dist 폴더만 올린다.
+// main에 푸시하면 Cloudflare가 `npm run build`로 빌드하고 `npx wrangler deploy`로 올린다. (README.md)
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "munju-dev",
+  "compatibility_date": "2026-10-06",
+  "assets": {
+    "directory": "./dist",
+    // 주소 끝의 /를 붙여서 찾는다. (/about → /about/, astro.config.mjs의 trailingSlash: 'always'와 같다)
+    "html_handling": "auto-trailing-slash",
+    // 없는 주소는 우리 404 페이지(dist/404.html)를 404 상태로 보여준다.
+    "not_found_handling": "404-page"
+  }
+}
