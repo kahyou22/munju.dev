@@ -1,0 +1,90 @@
+---
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import "@fontsource/gaegu/400.css";
+import "@fontsource/gaegu/700.css";
+import "../styles/base.css";
+import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
+import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
+import { themeTokensVersion } from "../lib/theme-tokens";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE_DESCRIPTION } = Astro.props;
+const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+    <!-- 바탕색처럼 이미지에도 구워야 하는 값. 한 번 받아 두고 페이지마다 다시 받지 않는다. (src/lib/theme-tokens.ts) -->
+    <link rel="stylesheet" href={`/theme-tokens.css?v=${themeTokensVersion()}`} />
+    <script is:inline define:vars={{ key: THEME_STORAGE_KEY, againstKey: THEME_AGAINST_KEY, eventName: THEME_EVENT }}>
+      // 첫 화면이 그려지기 전에 테마를 적용해서 깜빡임을 막는다. (규칙은 src/lib/theme.ts)
+      const applyStoredTheme = () => {
+        const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        let pref = "system";
+        try {
+          pref = localStorage.getItem(key) || "system";
+          // 고를 때와 시스템 설정이 달라졌으면 선택을 지우고 다시 시스템을 따른다.
+          const against = localStorage.getItem(againstKey);
+          if (against && against !== system) {
+            localStorage.removeItem(key);
+            localStorage.removeItem(againstKey);
+            pref = "system";
+          }
+        } catch {}
+        if (!["light", "dark"].includes(pref)) pref = "system";
+        const dark = pref === "dark" || (pref === "system" && system === "dark");
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.dataset.themePref = pref;
+      };
+      applyStoredTheme();
+      // 뒤로 가기로 돌아온 페이지(브라우저가 보관해 둔 페이지)나, 다른 탭에서 테마를 바꿨을 때도 맞춘다.
+      const reapply = () => {
+        applyStoredTheme();
+        document.dispatchEvent(new Event(eventName));
+      };
+      addEventListener("pageshow", (event) => event.persisted && reapply());
+      addEventListener("storage", (event) => (event.key === null || event.key === key) && reapply());
+    </script>
+  </head>
+  <body>
+    <header class="site-header container">
+      <a class="logo" href="/">{SITE_TITLE}</a>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="container site-footer" id="site-footer">
+      <span>© {new Date().getFullYear()} {SITE_TITLE}</span>
+      <a href={AUTHOR.github}>GitHub</a>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    display: flex;
+    align-items: center;
+    height: var(--header-height);
+  }
+
+  .logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-title);
+  }
+
+  .logo:hover {
+    text-decoration: none;
+  }
+</style>

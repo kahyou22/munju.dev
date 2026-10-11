@@ -1,0 +1,148 @@
+/*
+ * 기본 스타일: 디자인 토큰, 초기화, 글자, 링크, 포커스, 레이아웃.
+ * 기능마다 필요한 토큰과 스타일은 그 기능의 CSS 파일에 따로 둔다.
+ *
+ * 다크: 프리셋2-A (차콜 바탕, 블루 데모, 코랄 포인트)
+ * 라이트: 같은 디자인을 흰 바탕으로 뒤집은 것
+ * 바탕색(--color-bg)은 src/lib/palette.ts에 있다. 이미지에도 같은 색을 구워야 해서다. (theme-tokens.css)
+ */
+:root {
+  color-scheme: light;
+
+  --color-border: #e6e9ef;
+  --color-border-strong: #cdd3dd;
+  --color-title: #383637;
+  --color-text: #4b4a57;
+  --color-muted: #706f88;
+  --color-faint: #9a98a6;
+
+  --color-accent: #7491c8;
+  --color-link: #4f6ca8;
+  --color-logo-dot: #f09a95;
+  --color-highlight: #f09a95;
+  /* 코랄 점 캐릭터(로고, 404)의 눈·입 색. 점이 밝은 코랄이라 두 테마 모두 차콜로 둔다. */
+  --face-ink: #383637;
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* 손글씨: 날짜, 태그, 데모 안내처럼 짧은 글자에만 쓴다. Pretendard보다 작아 보여서 크기를 키운다. */
+  --font-hand: "Gaegu", var(--font-sans);
+  --hand-tracking: -0.06em;
+
+  --content-width: 680px;
+  --gutter: 20px;
+  --header-height: 56px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-border: #4a484d;
+  --color-border-strong: #5c5a60;
+  --color-title: #fefefe;
+  --color-text: #d2d6dc;
+  --color-muted: #a9a7b5;
+  --color-faint: #8f8d9b;
+
+  --color-link: #76b3fe;
+  --color-logo-dot: #fda9a6;
+  --color-highlight: #fda9a6;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 화면에는 안 보이고 스크린 리더만 읽는 글자 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-highlight) 38%, transparent);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* 키보드로 링크·버튼에 왔을 때는 반듯한 사각형 대신 손으로 그린 동그라미로 표시한다. */
+a:focus-visible,
+button:focus-visible {
+  position: relative;
+  outline: none;
+}
+
+a:focus-visible::after,
+button:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: -5px -8px;
+  border: 2px solid var(--color-accent);
+  border-radius: 14px 10px 15px 9px / 10px 14px 9px 15px;
+  pointer-events: none;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--content-width) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+main.container {
+  min-height: calc(100vh - var(--header-height) - 120px);
+  padding-block: 40px 64px;
+}
+
+.site-footer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding-block: 28px 40px;
+  font-size: 13px;
+  color: var(--color-faint);
+}
+
+.site-footer a {
+  color: var(--color-muted);
+}
