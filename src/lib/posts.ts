@@ -31,6 +31,19 @@ export function formatDate(date: Date, style: "long" | "dots" = "long"): string 
   return style === "dots" ? `${parts.year}.${parts.month.padStart(2, "0")}.${parts.day.padStart(2, "0")}` : `${parts.year}년 ${parts.month}월 ${parts.day}일`;
 }
 
+let tagSet: Promise<Set<string>> | undefined;
+
+/**
+ * 태그 페이지가 있는 태그들. (목록에 보이는 글의 태그) 글마다 다시 세지 않게, 빌드할 때는 한 번만 센다.
+ * 개발 서버에서는 글을 고치면 바로 반영되도록 매번 센다.
+ */
+export function tagsWithPage(): Promise<Set<string>> {
+  const count = async () => new Set((await getListedPosts()).flatMap((post) => post.data.tags));
+  if (import.meta.env.DEV) return count();
+  tagSet ??= count();
+  return tagSet;
+}
+
 /** 목록 한 페이지에 보여줄 글 수. 목록에서는 데모가 실제로 움직여서, 너무 많이 두면 페이지가 무거워진다. */
 export const POSTS_PER_PAGE = 5;
 

@@ -23,7 +23,7 @@ const { Content } = await render(post);
 <BaseLayout title={post.data.title} description={post.data.description} noindex={post.data.unlisted}>
   <article>
     <header class="post-header">
-      <PostMeta date={post.data.date} />
+      <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />
       <h1><HandUnderline seed={post.id}>{post.data.title}</HandUnderline></h1>
     </header>
     <div class="prose">

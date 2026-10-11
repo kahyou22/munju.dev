@@ -1,16 +1,24 @@
 ---
-// 글 위쪽의 날짜 줄. (태그와 N 표시는 태그 기능을 옮길 때 더한다)
-import { formatDate } from "../lib/posts";
+// 글 위쪽의 날짜·태그 줄.
+import Tag from "./Tag.astro";
+import { formatDate, tagsWithPage } from "../lib/posts";
 
 interface Props {
   date: Date;
+  tags: string[];
+  /** 손그림 모양을 고르는 값. 글마다 다르게 생기도록 글 id를 넘긴다. */
+  seed: string;
 }
 
-const { date } = Astro.props;
+const { date, tags, seed } = Astro.props;
+
+// 태그 페이지는 목록에 보이는 글의 태그로만 만든다. 일부 공개 글에만 있는 태그는 링크하지 않는다.
+const linkedTags = await tagsWithPage();
 ---
 
 <div class="meta">
   <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  {tags.map((tag) => <Tag name={tag} seed={`${seed}-${tag}`} link={linkedTags.has(tag)} />)}
 </div>
 
 <style>
