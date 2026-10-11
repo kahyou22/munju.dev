@@ -3,10 +3,10 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostList from "../../components/PostList.astro";
-import { getPosts, pageCount } from "../../lib/posts";
+import { getListedPosts, pageCount } from "../../lib/posts";
 
 export const getStaticPaths = (async () => {
-  const total = pageCount((await getPosts()).length);
+  const total = pageCount((await getListedPosts()).length);
   return Array.from({ length: total - 1 }, (_, i) => ({ params: { page: String(i + 2) } }));
 }) satisfies GetStaticPaths;
 

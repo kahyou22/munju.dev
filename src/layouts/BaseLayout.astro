@@ -19,9 +19,11 @@ import { themeTokensVersion } from "../lib/theme-tokens";
 interface Props {
   title?: string;
   description?: string;
+  /** 검색 엔진에 싣지 않는다. (일부 공개 글) */
+  noindex?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION } = Astro.props;
+const { title, description = SITE_DESCRIPTION, noindex = false } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 ---
 
@@ -34,6 +36,7 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
+    {noindex && <meta name="robots" content="noindex" />}
     <!-- 바탕색처럼 이미지에도 구워야 하는 값. 한 번 받아 두고 페이지마다 다시 받지 않는다. (src/lib/theme-tokens.ts) -->
     <link rel="stylesheet" href={`/theme-tokens.css?v=${themeTokensVersion()}`} />
     <script is:inline define:vars={{ key: THEME_STORAGE_KEY, againstKey: THEME_AGAINST_KEY, eventName: THEME_EVENT }}>

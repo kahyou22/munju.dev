@@ -19,6 +19,8 @@ const posts = defineCollection({
     tags: z.array(z.string()).default([]),
     /** 초안: 개발 서버에서만 보이고 빌드한 사이트에는 들어가지 않는다. */
     draft: z.boolean().default(false),
+    /** 일부 공개: 글 페이지는 있지만 목록·태그·RSS·사이트맵·검색 엔진에는 나오지 않는다. 링크로만 들어간다. */
+    unlisted: z.boolean().default(false),
   }),
 });
 

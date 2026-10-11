@@ -4,7 +4,7 @@ import PostPreview from "./PostPreview.astro";
 import Pagination from "./Pagination.astro";
 import Rule from "./Rule.astro";
 import { excerptComponents } from "./mdx";
-import { getPosts, pageCount, POSTS_PER_PAGE } from "../lib/posts";
+import { getListedPosts, pageCount, POSTS_PER_PAGE } from "../lib/posts";
 import "../styles/prose.css";
 
 interface Props {
@@ -19,7 +19,7 @@ const excerpts = import.meta.glob<{ default: (props: Record<string, unknown>) =>
   query: "?excerpt",
 });
 
-const posts = await getPosts();
+const posts = await getListedPosts();
 const total = pageCount(posts.length);
 const pagePosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 const previews = await Promise.all(
