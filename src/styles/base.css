@@ -143,6 +143,14 @@ main.container {
   color: var(--color-faint);
 }
 
+/* 푸터 위쪽 손그림 구분선 (rule.css) */
+.site-footer > .rule {
+  position: absolute;
+  top: 0;
+  left: var(--gutter);
+  right: var(--gutter);
+}
+
 .site-footer a {
   color: var(--color-muted);
 }

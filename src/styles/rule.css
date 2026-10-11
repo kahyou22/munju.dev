@@ -1,0 +1,28 @@
+/* 손으로 두 번 그은 듯한 가로선 (rough.js가 아니라 SVG 필터로 흔든다. WobbleFilters.astro, Rule.astro) */
+.rule {
+  position: relative;
+  height: 10px;
+}
+
+.rule::before,
+.rule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.rule::before {
+  top: 2px;
+  filter: var(--wobble-a);
+}
+
+.rule::after {
+  top: calc(2px + var(--rule-gap, 3px));
+  left: var(--rule-shift-start, 8px);
+  right: var(--rule-shift-end, 0px);
+  opacity: 0.45;
+  filter: var(--wobble-b);
+}

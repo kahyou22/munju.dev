@@ -4,6 +4,9 @@ import "@fontsource/gaegu/400.css";
 import "@fontsource/gaegu/700.css";
 import "../styles/base.css";
 import "../styles/hand-drawn.css";
+import "../styles/rule.css";
+import WobbleFilters from "../components/WobbleFilters.astro";
+import Rule from "../components/Rule.astro";
 import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
 import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
 import { themeTokensVersion } from "../lib/theme-tokens";
@@ -59,6 +62,7 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
     </script>
   </head>
   <body>
+    <WobbleFilters />
     <header class="site-header container">
       <a class="logo" href="/">{SITE_TITLE}</a>
     </header>
@@ -66,6 +70,7 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
       <slot />
     </main>
     <footer class="container site-footer" id="site-footer">
+      <Rule seed="footer" />
       <span>© {new Date().getFullYear()} {SITE_TITLE}</span>
       <a href={AUTHOR.github}>GitHub</a>
     </footer>

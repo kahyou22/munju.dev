@@ -1,0 +1,38 @@
+---
+// 구분선을 손으로 그은 것처럼 흔드는 SVG 필터(#wobble-1 ~ 6). 페이지마다 한 번만 넣는다.
+// 어떤 필터를 쓸지는 src/lib/wobble.ts의 wobbleFilter()로 고른다. (나머지 손그림 장식은 rough.js로 그린다)
+import { WOBBLE_VARIANTS } from "../lib/wobble";
+---
+
+<svg class="wobble-filters" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    {
+      WOBBLE_VARIANTS.map((v, index) => (
+        <filter id={`wobble-${index + 1}`} x="-20%" y="-50%" width="140%" height="200%" color-interpolation-filters="sRGB">
+          <feMorphology in="SourceGraphic" operator="dilate" radius={v.weight} result="thick" />
+          <feTurbulence type="fractalNoise" baseFrequency={v.pressure} numOctaves="1" seed={v.seed + 100} result="pressureNoise" />
+          <feColorMatrix in="pressureNoise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  5 0 0 0 -2.2" result="pressureMask" />
+          <feComposite in="thick" in2="pressureMask" operator="in" result="pressed" />
+          <feMerge result="stroke">
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="pressed" />
+          </feMerge>
+          <feTurbulence type="fractalNoise" baseFrequency={v.pressure * 1.7} numOctaves="1" seed={v.seed + 200} result="inkNoise" />
+          <feColorMatrix in="inkNoise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.4 0 0 0 -0.35" result="inkMask" />
+          <feComposite in="stroke" in2="inkMask" operator="in" result="inked" />
+          <feTurbulence type="fractalNoise" baseFrequency={v.frequency} numOctaves="2" seed={v.seed} result="wobble" />
+          <feDisplacementMap in="inked" in2="wobble" scale={v.scale} xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      ))
+    }
+  </defs>
+</svg>
+
+<style>
+  .wobble-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>
