@@ -1,0 +1,47 @@
+/*
+ * 게임 메뉴처럼, 마우스를 올리거나 키보드로 고른 항목 옆에 손그림 ▶(--menu-cursor)가 나타나 톡톡 튄다.
+ * 링크에 바로 붙이거나, 제목처럼 링크를 감싼 요소에 붙인다. (안쪽 링크를 고르면 나타난다)
+ * --cursor-size, --cursor-gap(글자와의 거리), --cursor-top(세로 위치)으로 자리를 맞춘다.
+ */
+.menu-cursor {
+  position: relative;
+}
+
+.menu-cursor::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--cursor-gap, 20px));
+  top: var(--cursor-top, 50%);
+  width: var(--cursor-size, 13px);
+  height: var(--cursor-size, 13px);
+  margin-top: calc(var(--cursor-size, 13px) / -2);
+  background: var(--menu-cursor) center / contain no-repeat;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.15s ease-out;
+  pointer-events: none;
+}
+
+.menu-cursor:is(a:hover, a:focus-visible, :has(a:hover, a:focus-visible))::before {
+  opacity: 1;
+  transform: none;
+  animation: cursor-bob 0.6s ease-in-out 0.15s infinite;
+}
+
+@keyframes cursor-bob {
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-cursor::before {
+    transition: none;
+  }
+
+  .menu-cursor:is(a:hover, a:focus-visible, :has(a:hover, a:focus-visible))::before {
+    animation: none;
+  }
+}
