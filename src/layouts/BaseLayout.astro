@@ -9,12 +9,14 @@ import "../styles/paper.css";
 import "../styles/underline.css";
 import "../styles/menu-cursor.css";
 import "../styles/copy-button.css";
+import "../styles/view-transition.css";
 import WobbleFilters from "../components/WobbleFilters.astro";
 import Rule from "../components/Rule.astro";
 import Header from "../components/Header.astro";
 import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
 import { AUTHOR, ogImagePath, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
 import { themeTokensVersion } from "../lib/theme-tokens";
+import pageTransitionScript from "../scripts/page-transition.js?raw";
 
 interface Props {
   title?: string;
@@ -62,6 +64,9 @@ const imageUrl = new URL(image, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <!-- 바탕색처럼 이미지에도 구워야 하는 값. 한 번 받아 두고 페이지마다 다시 받지 않는다. (src/lib/theme-tokens.ts) -->
     <link rel="stylesheet" href={`/theme-tokens.css?v=${themeTokensVersion()}`} />
+    <!-- 페이지 전환: 본문을 끝까지 읽어 들인 뒤에 첫 화면을 그려서, 이어지는 요소를 모두 찾을 수 있게 한다. (scripts/page-transition.js) -->
+    <link rel="expect" href="#site-footer" blocking="render" />
+    <script is:inline set:html={pageTransitionScript} />
     <script is:inline define:vars={{ key: THEME_STORAGE_KEY, againstKey: THEME_AGAINST_KEY, eventName: THEME_EVENT }}>
       // 첫 화면이 그려지기 전에 테마를 적용해서 깜빡임을 막는다. (규칙은 src/lib/theme.ts)
       const applyStoredTheme = () => {

@@ -1,0 +1,38 @@
+/*
+ * 페이지 전환. 새로고침처럼 하얗게 깜빡이지 않고 이전 화면이 새 화면으로 스르륵 바뀐다.
+ * 헤더는 따로 이어진다. (scripts/page-transition.js) 지원하지 않는 브라우저는 평소처럼 넘어간다.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 140ms ease-out both page-out;
+}
+
+::view-transition-new(root) {
+  animation: 240ms ease-out 40ms both page-in;
+}
+
+::view-transition-group(site-header) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
