@@ -1,0 +1,27 @@
+---
+title: 글쓰기 도구 모음
+description: 글을 쓸 때 쓸 수 있는 컴포넌트를 한곳에 모아둔 견본 글
+date: 2026-10-11
+tags: [블로그, 견본]
+unlisted: true
+---
+
+글을 쓸 때 쓸 수 있는 컴포넌트를 모아둔 견본 글이다. 일부 공개 글이라 목록에는 없고 링크로만 들어올 수 있다. 모든 컴포넌트는 import 없이 바로 쓸 수 있다.
+
+{/* more */}
+
+## 코드 블록
+
+언어 뒤에 `title="파일명"`을 쓰면 코드 위에 파일명이 붙는다. 오른쪽 위의 복사 버튼은 모든 코드 블록에 붙는다.
+
+```ts title="src/lib/greet.ts"
+export function greet(name: string) {
+  return `안녕, ${name}!`;
+}
+```
+
+````mdx
+```ts title="src/lib/greet.ts"
+export function greet(name: string) { ... }
+```
+````
