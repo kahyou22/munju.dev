@@ -78,6 +78,52 @@ import cat from "./cat.jpg";
 <Figure src={cat} alt="위를 올려다보는 흰 고양이" caption="캡션" />
 ```
 
+## Diagram
+
+손으로 그린 듯한 다이어그램이다. 빌드할 때 그림으로 만들어져서 브라우저로 가는 JS가 없다. 스크롤해서 화면에 들어오면 선이 스스로 그려지고, 상자에 마우스를 올리면 그 상자가 꿈틀거리면서 연결된 화살표가 강조된다.
+
+단순한 흐름은 `flow` 하나로 그린다.
+
+<Diagram flow={["글 쓰기", "빌드", "배포"]} caption="flow로 그린 단순한 흐름" />
+
+```mdx
+<Diagram flow={["글 쓰기", "빌드", "배포"]} />
+```
+
+갈라지거나 합쳐지는 흐름은 상자(`nodes`)와 연결선(`edges`)을 적는다. 상자는 칸(`col`, `row`)에 놓이고, `tone`으로 색을, `shape`로 모양을 바꾼다. 줄바꿈은 `\n`.
+
+<Diagram
+  nodes={[
+    { id: "a", label: "기본 상자", col: 0, row: 0 },
+    { id: "b", label: "accent", col: 1, row: 0, tone: "accent" },
+    { id: "c", label: "highlight", col: 2, row: 0, tone: "highlight" },
+    { id: "d", label: "tip\n두 줄도 된다", col: 1, row: 1, tone: "tip", shape: "pill" },
+    { id: "e", label: "muted", col: 2, row: 1, tone: "muted" },
+  ]}
+  edges={[
+    { from: "a", to: "b", label: "연결" },
+    { from: "b", to: "c" },
+    { from: "b", to: "d", label: "아래로" },
+    { from: "d", to: "e", label: "점선", dashed: true },
+  ]}
+  caption="상자 색과 모양, 연결선 라벨과 점선"
+/>
+
+```mdx
+<Diagram
+  nodes={[
+    { id: "a", label: "기본 상자", col: 0, row: 0 },
+    { id: "b", label: "accent", col: 1, row: 0, tone: "accent" },
+    { id: "d", label: "tip\n두 줄도 된다", col: 1, row: 1, tone: "tip", shape: "pill" },
+  ]}
+  edges={[
+    { from: "a", to: "b", label: "연결" },
+    { from: "b", to: "d", label: "점선", dashed: true },
+  ]}
+  caption="캡션"
+/>
+```
+
 ## 코드 블록
 
 언어 뒤에 `title="파일명"`을 쓰면 코드 위에 파일명이 붙는다. 오른쪽 위의 복사 버튼은 모든 코드 블록에 붙는다.

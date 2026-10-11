@@ -4,9 +4,10 @@ import Kbd from "../writing/Kbd.astro";
 import Mark from "../writing/Mark.astro";
 import Aside from "../writing/Aside.astro";
 import Figure from "../Figure.astro";
+import Diagram from "../writing/Diagram.astro";
 
 // MDX 글에서 import 없이 쓰는 컴포넌트.
-const writing = { Aside, Callout, Figure, Kbd, Mark };
+const writing = { Aside, Callout, Diagram, Figure, Kbd, Mark };
 
 /** 글 목록 미리보기(excerpt 모듈) */
 export const excerptComponents = { ...writing };
