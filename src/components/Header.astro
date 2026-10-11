@@ -1,0 +1,199 @@
+---
+import Rule from "./Rule.astro";
+import { roughCurve } from "../lib/rough";
+import { logoDot } from "../lib/logo";
+import { SITE_TITLE } from "../lib/site";
+
+// 로고 점은 작은 캐릭터다. 가끔 눈을 깜빡이고, 마우스를 올리면 ^^ 하고 웃는다. (데모 키의 웃는 얼굴, 404의 캐릭터와 같은 얼굴)
+const dot = logoDot(11);
+const squiggle = (label: string) =>
+  roughCurve(
+    [
+      [1, 5],
+      [7, 2],
+      [12, 4.5],
+      [17, 3],
+      [21, 3.5],
+    ],
+    `squiggle:${label}`,
+    { roughness: 0.7, maxRandomnessOffset: 0.8 },
+  );
+
+const NAV = [
+  { href: "/", label: "글", match: (path: string) => path === "/" || ["/page/", "/posts", "/tags"].some((prefix) => path.startsWith(prefix)) },
+  { href: "/about/", label: "소개", match: (path: string) => path.startsWith("/about") },
+];
+
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a class="logo" href="/">
+      <svg class="dot" viewBox="0 0 22 22" aria-hidden="true">
+        {dot.fills.map((d) => <path class="dot-fill" d={d} />)}
+        {dot.strokes.map((d) => <path class="dot-line" d={d} />)}
+        <g class="face-calm">
+          <ellipse class="eye" cx="8" cy="10.2" rx="1.25" ry="1.65" />
+          <ellipse class="eye" cx="14" cy="10.2" rx="1.25" ry="1.65" />
+        </g>
+        <g class="face-happy">
+          <path d="M6.4 10.9 8 9 9.6 10.9M12.4 10.9 14 9 15.6 10.9" />
+          <path d="M9.7 13.1h2.6c0 1.5-.6 2.3-1.3 2.3s-1.3-.8-1.3-2.3z" />
+        </g>
+      </svg>{SITE_TITLE}
+    </a>
+    <nav aria-label="주요 메뉴">
+      {
+        NAV.map((item) => (
+          <a href={item.href} class:list={["nav-link", "menu-cursor", item.match(path) ? "active" : "draw-underline"]} aria-current={item.match(path) ? "page" : undefined}>
+            {item.label}
+            {item.match(path) && (
+              <svg class="squiggle" viewBox="0 0 22 8" aria-hidden="true">
+                {squiggle(item.label).map((d) => (
+                  <path d={d} />
+                ))}
+              </svg>
+            )}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+  <Rule seed="header" />
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    /* 페이지를 옮겨도 헤더는 깜빡이지 않고 그 자리에 있다. */
+    view-transition-name: site-header;
+  }
+
+  .site-header > :global(.rule) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-title);
+  }
+
+  .logo:hover {
+    text-decoration: none;
+  }
+
+  .dot {
+    width: 19px;
+    height: 19px;
+    overflow: visible;
+  }
+
+  /* 얼굴은 두 테마 모두 진한 색. 점 색이 밝은 코랄이라 다크에서도 잘 보인다. */
+  .eye {
+    fill: var(--face-ink);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: blink 4.6s infinite;
+  }
+
+  /* 대부분은 눈을 뜨고 있다가, 가끔 두 번 깜빡인다. */
+  @keyframes blink {
+    0%,
+    90%,
+    94%,
+    100% {
+      transform: scaleY(1);
+    }
+    92%,
+    96% {
+      transform: scaleY(0.12);
+    }
+  }
+
+  .face-happy {
+    display: none;
+    fill: none;
+    stroke: var(--face-ink);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .logo:is(:hover, :focus-visible) .face-calm {
+    display: none;
+  }
+
+  .logo:is(:hover, :focus-visible) .face-happy {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .eye {
+      animation: none;
+    }
+  }
+
+  .dot-fill {
+    fill: var(--color-logo-dot);
+  }
+
+  .dot-line {
+    fill: none;
+    stroke: var(--color-logo-dot);
+    stroke-width: 1.2;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 14px;
+  }
+
+  .nav-link {
+    --cursor-size: 10px;
+    --cursor-gap: 14px;
+    --draw-line: var(--nav-draw);
+    --dust-color: var(--color-highlight);
+    position: relative;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+
+  .nav-link:hover {
+    color: var(--color-title);
+    text-decoration: none;
+  }
+
+  .nav-link.active {
+    color: var(--color-title);
+  }
+
+  .squiggle {
+    position: absolute;
+    left: -4px;
+    bottom: -6px;
+    width: 22px;
+    height: 8px;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-highlight);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+</style>
