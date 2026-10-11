@@ -6,6 +6,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import svelte from '@astrojs/svelte';
 
 import { moreMarkerPlugin } from './src/lib/more-marker.mjs';
+import { roughMarkupPlugin } from './src/lib/rough-markup.mjs';
 import { excerptPlugin } from './src/lib/excerpt-vite-plugin.mjs';
 
 // https://astro.build/config
@@ -27,7 +28,8 @@ export default defineConfig({
   // 링크에 마우스를 올렸을 때만 다음 페이지를 미리 불러온다. (글 목록에 전체 글이 미리 전송되지 않게)
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   markdown: {
-    // 글 페이지에서 미리보기가 끝나는 자리에 #more 앵커를 둔다. (src/lib/more-marker.mjs)
-    processor: satteri({ mdastPlugins: [moreMarkerPlugin] }),
+    // - more-marker: 글 페이지에서 미리보기가 끝나는 자리에 #more 앵커를 둔다.
+    // - rough-markup: 인용문·표 같은 요소에 손그림 장식(data-rough)을 붙인다.
+    processor: satteri({ mdastPlugins: [moreMarkerPlugin], hastPlugins: [roughMarkupPlugin] }),
   },
 });

@@ -5,6 +5,7 @@ import PostMeta from "../../components/PostMeta.astro";
 import HandUnderline from "../../components/HandUnderline.astro";
 import { fullComponents } from "../../components/mdx";
 import { getPosts, type Post } from "../../lib/posts";
+import "../../styles/prose.css";
 
 export async function getStaticPaths() {
   const posts = await getPosts();

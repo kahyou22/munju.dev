@@ -1,0 +1,136 @@
+/* MDX 본문 스타일. 글 페이지와 글 목록 미리보기에서 함께 쓴다. */
+:root {
+  --code-bg: #f4f5f7;
+}
+
+:root[data-theme="dark"] {
+  --code-bg: #2f2d2e;
+}
+
+.prose {
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--color-text);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose p {
+  margin: 0 0 1.2em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin: 2.2em 0 0.7em;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--color-title);
+}
+
+.prose h2 {
+  font-size: 23px;
+}
+
+.prose h3 {
+  font-size: 19px;
+}
+
+.prose h4 {
+  font-size: 17px;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1.2em;
+  padding-left: 1.4em;
+}
+
+.prose li {
+  margin: 0.3em 0;
+}
+
+.prose li::marker {
+  color: var(--color-accent);
+}
+
+/* 인용문: 왼쪽에 손그림 막대 (rough-markup.mjs가 data-rough를 붙인다) */
+.prose blockquote {
+  --rough-stroke: var(--color-highlight);
+  --rough-stroke-width: 2.2;
+  margin: 1.6em 0;
+  padding: 2px 0 2px 20px;
+  color: var(--color-muted);
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* 가로줄은 구분선처럼 SVG 필터로 흔든다. (WobbleFilters.astro) */
+.prose hr {
+  height: 6px;
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid var(--color-border-strong);
+  filter: url(#wobble-4);
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.prose :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 6px 4px 7px 3px / 4px 6px 3px 7px;
+  background: var(--code-bg);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--color-title);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* 인라인 코드 칩이 모두 똑같은 모양이 되지 않게 모서리를 돌아가며 바꾼다. */
+.prose :not(pre) > code:nth-of-type(3n + 2) {
+  border-radius: 4px 7px 3px 6px / 6px 3px 7px 4px;
+}
+
+.prose :not(pre) > code:nth-of-type(3n) {
+  border-radius: 7px 3px 6px 4px / 3px 7px 4px 6px;
+}
+
+/* 표: 칸마다 아래에 손그림 선 (rough-markup.mjs) */
+.prose table {
+  width: 100%;
+  margin: 1.6em 0;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.prose th,
+.prose td {
+  --rough-stroke: var(--color-border-strong);
+  --rough-stroke-width: 1;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.prose th {
+  font-weight: 600;
+  color: var(--color-title);
+}
