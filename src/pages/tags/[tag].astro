@@ -1,0 +1,70 @@
+---
+// 태그 하나의 글 목록. /tags/Svelte, /tags/회고
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostIndex from "../../components/PostIndex.astro";
+import Rule from "../../components/Rule.astro";
+import Tag from "../../components/Tag.astro";
+import { getListedPosts, groupByTag, type Post } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  return groupByTag(await getListedPosts()).map(({ tag, posts }) => ({ params: { tag }, props: { tag, posts } }));
+}
+
+interface Props {
+  tag: string;
+  posts: Post[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`${tag} 태그`} description={`${tag} 태그가 붙은 글 ${posts.length}개`}>
+  <header class="tag-header">
+    <p class="label">태그</p>
+    <h1><Tag name={tag} seed={`heading-${tag}`} /></h1>
+    <p class="count">글 {posts.length}개</p>
+  </header>
+  <Rule seed={`tag-${tag}`} />
+  <div class="body">
+    <PostIndex posts={posts} />
+  </div>
+  <a class="all draw-underline" href="/tags/">모든 태그 보기</a>
+</BaseLayout>
+
+<style>
+  .tag-header {
+    margin-bottom: 24px;
+  }
+
+  .label,
+  .count {
+    margin: 0;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+
+  h1 {
+    margin: 6px 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  /* 제목 자리의 태그는 크게 */
+  h1 :global(.tag) {
+    height: 38px;
+    padding: 0 18px;
+    font-size: 26px;
+  }
+
+  .body {
+    margin: 32px 0 40px;
+  }
+
+  .all {
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 17px;
+  }
+</style>

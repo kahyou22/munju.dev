@@ -1,0 +1,50 @@
+---
+// 모든 태그 모음. 태그마다 글 수를 붙인다.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Rule from "../../components/Rule.astro";
+import Tag from "../../components/Tag.astro";
+import { getListedPosts, groupByTag } from "../../lib/posts";
+
+const groups = groupByTag(await getListedPosts());
+---
+
+<BaseLayout title="태그" description="태그별로 글을 모아봅니다">
+  <h1>태그</h1>
+  <Rule seed="tags" />
+  {groups.length === 0 && <p class="empty">아직 태그가 없어요.</p>}
+  <ul class="tags">
+    {
+      groups.map(({ tag, posts }) => (
+        <li>
+          <Tag name={tag} seed={`all-${tag}`} count={posts.length} />
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin: 0 0 20px;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-title);
+  }
+
+  .empty {
+    margin: 36px 0 0;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 19px;
+    color: var(--color-muted);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 10px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

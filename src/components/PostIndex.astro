@@ -1,0 +1,60 @@
+---
+// 제목만 모아 보여주는 가벼운 글 목록. (태그 페이지)
+// 홈과 달리 미리보기나 데모 없이 날짜, 제목, 한 줄 설명만 보여준다.
+import { formatDate, postHref, type Post } from "../lib/posts";
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ol class="index">
+  {
+    posts.map((post) => (
+      <li>
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <a class="title draw-underline menu-cursor" href={postHref(post.id)}>
+          {post.data.title}
+        </a>
+        {post.data.description && <p>{post.data.description}</p>}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .index {
+    display: grid;
+    gap: 26px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  time {
+    display: block;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+
+  .title {
+    --cursor-top: 0.72em;
+    --cursor-gap: 22px;
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-title);
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+</style>

@@ -12,7 +12,7 @@ export async function getPosts(): Promise<Post[]> {
   return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.id.localeCompare(b.id));
 }
 
-/** 목록에 보이는 글. 일부 공개(unlisted) 글은 빠진다. */
+/** 목록·태그 페이지에 보이는 글. 일부 공개(unlisted) 글은 빠진다. */
 export async function getListedPosts(): Promise<Post[]> {
   return (await getPosts()).filter((post) => !post.data.unlisted);
 }
@@ -49,4 +49,24 @@ export function postHref(id: string): string {
 /** 목록 n번째 페이지 주소. 첫 페이지는 홈(/)이다. */
 export function pageHref(page: number): string {
   return page === 1 ? "/" : `/page/${page}/`;
+}
+
+/** 태그 페이지 주소. 한글 태그도 그대로 쓴다. (/tags/회고) */
+export function tagHref(tag: string): string {
+  return `/tags/${encodeURIComponent(tag)}/`;
+}
+
+/** 태그별 글 목록. 글이 많은 태그가 앞에 오고, 같으면 이름 순이다. */
+export function groupByTag(posts: Post[]): { tag: string; posts: Post[] }[] {
+  const groups = new Map<string, Post[]>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const tagged = groups.get(tag);
+      if (tagged) tagged.push(post);
+      else groups.set(tag, [post]);
+    }
+  }
+  return [...groups]
+    .map(([tag, tagged]) => ({ tag, posts: tagged }))
+    .sort((a, b) => b.posts.length - a.posts.length || a.tag.localeCompare(b.tag, "ko"));
 }
