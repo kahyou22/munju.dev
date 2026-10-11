@@ -1,0 +1,52 @@
+---
+// 형광펜으로 칠한 듯한 강조. 화면에 들어올 때 왼쪽부터 쓱 칠해진다. (형광펜 모양은 theme-tokens.ts가 만든다)
+// MDX: <Mark>강조할 말</Mark>
+import { pick } from "../../lib/hand-drawn";
+
+const text = await Astro.slots.render("default");
+const variant = `shape-${pick(text, 3, "mark") + 1}`;
+---
+
+<mark class:list={["mark", variant]} set:html={text} />
+
+<style>
+  .mark {
+    padding: 0 0.12em;
+    color: inherit;
+    background: none no-repeat left 62% / 100% 74%;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .shape-1 {
+    background-image: var(--mark-1);
+  }
+
+  .shape-2 {
+    background-image: var(--mark-2);
+  }
+
+  .shape-3 {
+    background-image: var(--mark-3);
+  }
+
+  /* 스크롤해서 화면에 들어오면 왼쪽부터 칠해진다. 지원하지 않는 브라우저에서는 처음부터 칠해져 있다. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .mark {
+        animation: swipe linear both;
+        animation-timeline: view();
+        animation-range: entry 20% cover 40%;
+      }
+    }
+  }
+
+  @keyframes swipe {
+    from {
+      background-size: 0% 74%;
+    }
+    to {
+      background-size: 100% 74%;
+    }
+  }
+</style>
