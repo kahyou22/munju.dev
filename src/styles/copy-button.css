@@ -1,0 +1,23 @@
+/* 코드 오른쪽 위의 "복사" 버튼. 본문 코드 블록(scripts/copy-code.ts가 붙임)과 데모의 코드 보기가 같이 쓴다.
+   버튼 뒤로 코드가 비치지 않게 코드 바탕색을 깐다. */
+.copy-button,
+.copy-button:focus-visible {
+  /* 키보드로 고를 때도(button:focus-visible) 제자리에 있게 한다. */
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 1;
+  padding: 2px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--code-bg);
+  font-family: var(--font-hand);
+  letter-spacing: var(--hand-tracking);
+  font-size: 16px;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  color: var(--color-title);
+}

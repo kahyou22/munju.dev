@@ -55,3 +55,12 @@ export const latencyDark = {
     property: "#d2d6dc",
   }),
 };
+
+/** ```ts title="hello.ts"처럼 쓴 파일명을 <pre data-title>로 옮긴다. 코드 블록 위에 이름표로 보인다. (rough-markup.mjs) */
+export const codeTitleTransformer = {
+  name: "munju-code-title",
+  pre(node) {
+    const title = this.options.meta?.__raw?.match(/title="([^"]+)"/)?.[1];
+    if (title) node.properties["data-title"] = title;
+  },
+};

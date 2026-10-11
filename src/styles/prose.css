@@ -1,11 +1,4 @@
 /* MDX 본문 스타일. 글 페이지와 글 목록 미리보기에서 함께 쓴다. */
-:root {
-  --code-bg: #f4f5f7;
-}
-
-:root[data-theme="dark"] {
-  --code-bg: #2f2d2e;
-}
 
 .prose {
   font-size: 17px;
@@ -127,6 +120,23 @@
   --rough-stroke-width: 1;
   margin: 1.6em 0;
 }
+
+/* ```ts title="파일명"으로 쓴 파일명. 코드 위에 이름표처럼 붙는다. (rough-markup.mjs) */
+.prose .code-block[data-title]::before {
+  content: attr(data-title);
+  display: block;
+  padding: 12px 18px 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+.prose .code-block[data-title] pre {
+  padding-top: 8px;
+}
+
+/* 복사 버튼(.copy-button)은 스크립트가 붙인다. (scripts/copy-code.ts, copy-button.css) */
 
 .prose pre {
   position: relative;

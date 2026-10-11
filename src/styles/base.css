@@ -22,6 +22,8 @@
   --color-highlight: #f09a95;
   /* 코랄 점 캐릭터(로고, 404)의 눈·입 색. 점이 밝은 코랄이라 두 테마 모두 차콜로 둔다. */
   --face-ink: #383637;
+  /* 코드 바탕 (본문 코드, 복사 버튼, 데모의 코드 보기) */
+  --code-bg: #f4f5f7;
 
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -47,6 +49,7 @@
   --color-link: #76b3fe;
   --color-logo-dot: #fda9a6;
   --color-highlight: #fda9a6;
+  --code-bg: #2f2d2e;
 }
 
 *,
