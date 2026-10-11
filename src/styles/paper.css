@@ -1,0 +1,45 @@
+/*
+ * 양옆 반짝이·하트 바탕. 가운데 글 영역(종이 한 장)은 깨끗하게 두고, 양옆에만 모눈처럼 깐다.
+ * 왼쪽은 블루, 오른쪽은 레드다. 글 영역에 가까울수록 도형 개수가 줄어든다(투명도가 아니라 개수로 옅어지는 디더링).
+ * 화면이 좁으면 옆이 없으니 보이지 않는다.
+ * 배치는 /paper-sparkles.svg(src/lib/paper-sparkles.ts)를 마스크로 쓴다.
+ */
+:root {
+  --paper-dot-left: #e3e9f5;
+  --paper-dot-right: #f9e3e1;
+  /* 글 영역(종이)의 절반 폭. 이 바깥에서부터 무늬가 시작된다. */
+  --sheet-half: calc(var(--content-width) / 2 + var(--gutter));
+}
+
+:root[data-theme="dark"] {
+  --paper-dot-left: #444754;
+  --paper-dot-right: #524546;
+}
+
+/* 반쪽씩 따로 깔아서 색을 다르게 한다. 오른쪽은 같은 배치를 좌우로 뒤집고 세로로 반만큼 밀어서,
+   거울처럼 똑같아 보이지 않게 한다. */
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 50%;
+  pointer-events: none;
+  -webkit-mask: url("/paper-sparkles.svg") right var(--sheet-half) top 0 / 1536px 576px repeat-y;
+  mask: url("/paper-sparkles.svg") right var(--sheet-half) top 0 / 1536px 576px repeat-y;
+}
+
+body::before {
+  left: 0;
+  background: var(--paper-dot-left);
+}
+
+body::after {
+  right: 0;
+  background: var(--paper-dot-right);
+  transform: scaleX(-1);
+  -webkit-mask-position: right var(--sheet-half) top 288px;
+  mask-position: right var(--sheet-half) top 288px;
+}
