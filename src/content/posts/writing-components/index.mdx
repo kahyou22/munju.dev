@@ -6,6 +6,8 @@ tags: [블로그, 견본]
 unlisted: true
 ---
 
+import PointerTrail from "./PointerTrail.svelte";
+import pointerTrailSource from "./PointerTrail.svelte?raw";
 import cat from "./cat.jpg";
 
 글을 쓸 때 쓸 수 있는 컴포넌트를 모아둔 견본 글이다. 일부 공개 글이라 목록에는 없고 링크로만 들어올 수 있다. 모든 컴포넌트는 import 없이 바로 쓸 수 있다.
@@ -76,6 +78,23 @@ import cat from "./cat.jpg";
 import cat from "./cat.jpg";
 
 <Figure src={cat} alt="위를 올려다보는 흰 고양이" caption="캡션" />
+```
+
+## DemoBox
+
+데모 아래에 "코드 보기"를 붙여서 데모의 실제 소스를 보여준다. 데모 파일을 `?raw`로 불러오기 때문에 데모를 고치면 보이는 코드도 같이 바뀐다. 글 목록 미리보기에서는 코드 없이 데모만 보인다.
+
+<DemoBox code={pointerTrailSource} file="PointerTrail.svelte">
+  <PointerTrail client:visible />
+</DemoBox>
+
+```mdx
+import PointerTrail from "./PointerTrail.svelte";
+import source from "./PointerTrail.svelte?raw";
+
+<DemoBox code={source} file="PointerTrail.svelte">
+  <PointerTrail client:visible />
+</DemoBox>
 ```
 
 ## Diagram
