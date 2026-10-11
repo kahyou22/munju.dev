@@ -43,6 +43,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
     <meta property="og:site_name" content={SITE_TITLE} />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:type" content={published ? "article" : "website"} />
