@@ -1,8 +1,9 @@
 import MoreAnchor from "./MoreAnchor.astro";
 import Callout from "../writing/Callout.astro";
+import Kbd from "../writing/Kbd.astro";
 
 // MDX 글에서 import 없이 쓰는 컴포넌트.
-const writing = { Callout };
+const writing = { Callout, Kbd };
 
 /** 글 목록 미리보기(excerpt 모듈) */
 export const excerptComponents = { ...writing };

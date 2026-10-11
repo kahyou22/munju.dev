@@ -1,0 +1,26 @@
+---
+// 손으로 그린 키보드 키. MDX: <Kbd>Ctrl</Kbd> + <Kbd>C</Kbd>
+import { ROUGH_PRESETS } from "../../lib/rough";
+import { roughAttrs } from "../../lib/rough-decor";
+const label = await Astro.slots.render("default");
+---
+
+<kbd class="kbd" {...roughAttrs({ kind: "box", fill: true, seed: `kbd:${label}`, radius: 8, ...ROUGH_PRESETS.chip })} set:html={label} />
+
+<style>
+  .kbd {
+    --rough-fill: var(--kbd-bg);
+    --rough-stroke: var(--kbd-border);
+    --rough-stroke-width: 1;
+    display: inline-block;
+    min-width: 1.7em;
+    margin: 0 0.1em;
+    padding: 0.05em 0.45em 0.12em;
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--color-title);
+    vertical-align: 0.08em;
+  }
+</style>

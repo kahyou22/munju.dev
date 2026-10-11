@@ -1,6 +1,6 @@
 /* MDX 본문 스타일. 글 페이지와 글 목록 미리보기에서 함께 쓴다. */
 
-/* 글쓰기 컴포넌트 색: Callout 종류별 선과 라벨 (바탕색은 palette.ts → theme-tokens.css) */
+/* 글쓰기 컴포넌트 색: Callout 종류별 선과 라벨(바탕색은 palette.ts → theme-tokens.css), Kbd 키 */
 :root {
   --callout-note-line: #7491c8;
   --callout-note-label: #4f6ca8;
@@ -8,6 +8,9 @@
   --callout-tip-label: #2f7f86;
   --callout-warn-line: #f09a95;
   --callout-warn-label: #b5524e;
+  /* Kbd */
+  --kbd-bg: #fefefe;
+  --kbd-border: #c3cad6;
 }
 
 :root[data-theme="dark"] {
@@ -17,6 +20,8 @@
   --callout-tip-label: #8fd3cf;
   --callout-warn-line: #fda9a6;
   --callout-warn-label: #fda9a6;
+  --kbd-bg: #4a484d;
+  --kbd-border: #6a6870;
 }
 
 .prose {
