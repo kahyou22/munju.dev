@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HandArrow from "../components/HandArrow.astro";
+import { roughCurve, roughPath } from "../lib/rough";
+import { BOIL_FRAMES } from "../lib/rough-decor";
+
+// 손그림 캐릭터. 몸은 모양 4개를 만들어 두고, 마우스를 올리면 차례로 바꿔 보여주며 꿈틀거린다.
+const BLOB = "M171 44c17-2 32 9 33 27 1 19-12 35-31 36-18 1-32-12-33-29-1-18 13-32 31-34z";
+const blobFrames = Array.from({ length: BOIL_FRAMES }, (_, f) => roughPath(BLOB, `404-blob:${f}`, { fill: true, roughness: 1.1 }));
+const trail = roughCurve(
+  [
+    [12, 128],
+    [40, 112],
+    [62, 128],
+    [92, 104],
+    [122, 106],
+    [150, 112],
+  ],
+  "404-trail",
+  { roughness: 1, single: true },
+);
+---
+
+<BaseLayout title="페이지를 찾을 수 없음">
+  <section class="not-found">
+    <!-- 길을 잃은 코랄 점. 눈이 마우스를 따라가고, 마우스를 올리면 꿈틀거린다. -->
+    <svg class="lost boil-on-hover" viewBox="0 0 240 150" aria-hidden="true">
+      {trail.map((d) => <path class="trail" d={d} />)}
+      {
+        blobFrames.map((frame, f) => (
+          <g class="blob" data-frame={f}>
+            {frame.fills.map((d) => (
+              <path class="blob-fill" d={d} />
+            ))}
+            {frame.strokes.map((d) => (
+              <path class="blob-line" d={d} />
+            ))}
+          </g>
+        ))
+      }
+      <g class="eye" data-cx="163" data-cy="70"><circle cx="163" cy="70" r="3.4"></circle></g>
+      <g class="eye" data-cx="181" data-cy="68"><circle cx="181" cy="68" r="3.4"></circle></g>
+      <text class="question" x="206" y="38">?</text>
+      <circle class="speck" cx="58" cy="40" r="2.2"></circle>
+      <circle class="speck" cx="118" cy="26" r="1.6"></circle>
+      <circle class="speck pink" cx="214" cy="120" r="2"></circle>
+    </svg>
+    <p class="code">404</p>
+    <h1>페이지를 찾을 수 없어요</h1>
+    <p class="note">주소가 바뀌었거나 없는 페이지예요.</p>
+    <a class="draw-underline" href="/">글 목록으로 돌아가기<HandArrow seed="404" /></a>
+  </section>
+</BaseLayout>
+
+<script>
+  // 눈동자가 마우스 쪽을 바라본다.
+  const svg = document.querySelector<SVGSVGElement>(".lost");
+  if (svg) {
+    const eyes = [...svg.querySelectorAll<SVGGElement>(".eye")];
+    window.addEventListener("pointermove", (event) => {
+      const rect = svg.getBoundingClientRect();
+      const scale = rect.width / 240;
+      for (const eye of eyes) {
+        const cx = rect.left + Number(eye.dataset.cx) * scale;
+        const cy = rect.top + Number(eye.dataset.cy) * scale;
+        const angle = Math.atan2(event.clientY - cy, event.clientX - cx);
+        eye.setAttribute("transform", `translate(${(Math.cos(angle) * 2.4).toFixed(2)} ${(Math.sin(angle) * 2.4).toFixed(2)})`);
+      }
+    });
+  }
+</script>
+
+<style>
+  .not-found {
+    padding-block: 32px 64px;
+    text-align: center;
+  }
+
+  .lost {
+    display: block;
+    width: min(320px, 100%);
+    margin: 0 auto 8px;
+    overflow: visible;
+  }
+
+  .trail {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 2;
+    stroke-dasharray: 2 7;
+    stroke-linecap: round;
+  }
+
+  .blob-fill {
+    fill: var(--color-logo-dot);
+  }
+
+  .blob-line {
+    fill: none;
+    stroke: var(--color-logo-dot);
+    stroke-width: 1.5;
+  }
+
+  .eye circle {
+    fill: var(--face-ink);
+  }
+
+  .eye {
+    transition: transform 0.12s ease-out;
+  }
+
+  .question {
+    font-family: var(--font-hand);
+    font-size: 34px;
+    font-weight: 700;
+    fill: var(--color-accent);
+  }
+
+  .speck {
+    fill: var(--color-accent);
+    opacity: 0.6;
+  }
+
+  .speck.pink {
+    fill: var(--color-highlight);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .eye circle {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: blink 4.5s infinite;
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    94%,
+    100% {
+      transform: scaleY(1);
+    }
+    97% {
+      transform: scaleY(0.1);
+    }
+  }
+
+  .code {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  h1 {
+    margin: 12px 0 6px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-title);
+  }
+
+  .note {
+    margin: 0 0 24px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 18px;
+    color: var(--color-muted);
+  }
+</style>
