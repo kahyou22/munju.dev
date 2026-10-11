@@ -1,14 +1,26 @@
 // @ts-check
+import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
 import { satteri } from '@astrojs/markdown-satteri';
 import svelte from '@astrojs/svelte';
+import sitemap from '@astrojs/sitemap';
 
 import { moreMarkerPlugin } from './src/lib/more-marker.mjs';
 import { roughMarkupPlugin } from './src/lib/rough-markup.mjs';
 import { codeTitleTransformer, latencyDark, latencyLight } from './src/lib/shiki-themes.mjs';
 import { excerptPlugin } from './src/lib/excerpt-vite-plugin.mjs';
+
+// 검색 엔진에 싣지 않는 페이지(<meta name="robots" content="noindex">, 일부 공개 글 등)는 사이트맵에서도 뺀다.
+// 글 정보를 다시 읽지 않고, 이미 빌드된 페이지를 보고 정한다. 사이트맵은 빌드가 끝난 뒤에 만들어지기 때문이다.
+const distDir = fileURLToPath(new URL('./dist/', import.meta.url));
+/** @param {string} page */
+function isNoindex(page) {
+  const file = `${distDir}${new URL(page).pathname.replace(/^\//, '')}index.html`;
+  return existsSync(file) && /<meta name="robots" content="noindex"/.test(readFileSync(file, 'utf-8'));
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,7 +28,12 @@ export default defineConfig({
   site: 'https://munju.dev',
   // 주소 끝에는 늘 /를 붙인다. 개발 서버에서 /를 빠뜨린 링크는 404가 나서 바로 알 수 있다.
   trailingSlash: 'always',
-  integrations: [mdx(), svelte()],
+  integrations: [
+    mdx(),
+    svelte(),
+    // 검색 엔진에 싣지 않는 페이지는 빼고 싣는다. (404는 사이트맵이 알아서 뺀다)
+    sitemap({ filter: (page) => !isNoindex(page) }),
+  ],
   vite: {
     // 글 목록용 미리보기 모듈(`글.mdx?excerpt`)을 만든다. src/lib/excerpt-vite-plugin.mjs 참고
     plugins: [excerptPlugin()],
