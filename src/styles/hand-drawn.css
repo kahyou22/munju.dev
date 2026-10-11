@@ -44,31 +44,78 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /*
+   * 모양 4개가 모두 같은 시간표(지연 없이 같은 길이)로 돌고, 보이는 구간만 모양마다 다르다.
+   * 모양마다 animation-delay로 엇갈리게 돌리면, 넘어가는 순간의 시간 계산이 모양마다 조금씩 어긋나서
+   * 몇 초에 한 번씩 아무 모양도 안 보이는 틈이 생겼다. (데모 상자 전체가 깜빡였다)
+   */
   :is(.boiling, .boil-on-hover:hover) [data-frame] {
     display: inline;
-    animation: boil 0.56s infinite;
   }
 
-  /* 음수 지연으로 순서를 엇갈리게 해서, 한 번에 하나씩만 보이게 한다. */
+  :is(.boiling, .boil-on-hover:hover) [data-frame="0"] {
+    animation: boil-0 0.56s step-end infinite;
+  }
+
   :is(.boiling, .boil-on-hover:hover) [data-frame="1"] {
-    animation-delay: -0.42s;
+    animation: boil-1 0.56s step-end infinite;
   }
 
   :is(.boiling, .boil-on-hover:hover) [data-frame="2"] {
-    animation-delay: -0.28s;
+    animation: boil-2 0.56s step-end infinite;
   }
 
   :is(.boiling, .boil-on-hover:hover) [data-frame="3"] {
-    animation-delay: -0.14s;
+    animation: boil-3 0.56s step-end infinite;
   }
 }
 
-@keyframes boil {
-  0%,
-  24.9% {
+/* step-end라서 각 구간 동안 그 구간 첫 값을 그대로 쓴다. 어느 순간이든 정확히 하나만 1이다. */
+@keyframes boil-0 {
+  0% {
     opacity: 1;
   }
   25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes boil-1 {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes boil-2 {
+  0%,
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes boil-3 {
+  0%,
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
   100% {
     opacity: 0;
   }
