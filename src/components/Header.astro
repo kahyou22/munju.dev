@@ -1,5 +1,6 @@
 ---
 import Rule from "./Rule.astro";
+import ThemeToggle from "./ThemeToggle.astro";
 import { roughCurve } from "../lib/rough";
 import { logoDot } from "../lib/logo";
 import { SITE_TITLE } from "../lib/site";
@@ -58,6 +59,7 @@ const path = Astro.url.pathname;
           </a>
         ))
       }
+      <ThemeToggle />
     </nav>
   </div>
   <Rule seed="header" />

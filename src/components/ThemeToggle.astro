@@ -1,0 +1,218 @@
+---
+// 밝은 테마 ↔ 어두운 테마를 오가는 버튼. 지금 보이는 테마의 아이콘(해, 달)을 보여준다.
+// 시스템 설정 따르기는 따로 고르지 않아도 알아서 된다. (src/lib/theme.ts)
+// 페이지가 그려지기 전에 테마를 적용하는 스크립트는 BaseLayout의 <head>에 있다.
+import { ROUGH_PRESETS, roughEllipse, roughPath } from "../lib/rough";
+import { BOIL_FRAMES } from "../lib/rough-decor";
+
+// 아이콘을 손그림으로 다시 그린다. 누르면 포레이저에서 나무를 칠 때처럼 찌그러졌다 튀어 오르고,
+// 잠깐 번쩍이며 부스러기가 튄다. 그동안 손그림 모양도 몇 번 바뀌며 꿈틀거린다. (아래 스크립트)
+const ICON_OPTS = ROUGH_PRESETS.icon;
+const FRAMES = BOIL_FRAMES;
+const icons = {
+  light: (f: number) => [
+    ...roughEllipse(12, 12, 8, 8, `theme-light-sun:${f}`, ICON_OPTS).strokes,
+    ...roughPath("M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41", `theme-light-rays:${f}`, ICON_OPTS).strokes,
+  ],
+  dark: (f: number) => roughPath("M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z", `theme-dark:${f}`, ICON_OPTS).strokes,
+};
+const frames = Array.from({ length: FRAMES }, (_, f) => f);
+---
+
+<button class="theme-toggle" type="button" aria-label="테마 바꾸기">
+  {
+    (["light", "dark"] as const).map((name) => (
+      <svg class:list={["icon", `icon-${name}`]} viewBox="0 0 24 24" aria-hidden="true">
+        {frames.map((f) => (
+          <g class="frame" data-frame={f}>
+            {icons[name](f).map((d) => (
+              <path d={d} />
+            ))}
+          </g>
+        ))}
+      </svg>
+    ))
+  }
+</button>
+
+<script>
+  import { currentPreference, currentTheme, THEME_EVENT, toggleTheme, watchSystemTheme, type Theme } from "../lib/theme";
+
+  const LABEL: Record<Theme, string> = {
+    light: "밝은 테마",
+    dark: "어두운 테마",
+  };
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const CHIP_COLORS = ["var(--color-logo-dot)", "var(--color-accent)", "var(--color-muted)"];
+
+  /** 맞은 자리에서 작은 부스러기가 위로 튀었다가 떨어진다. 방향과 크기는 누를 때마다 다르다. */
+  function burst(button: HTMLButtonElement) {
+    const debris = document.createElement("span");
+    debris.className = "debris";
+    debris.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 7; i++) {
+      const chip = document.createElement("span");
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.4;
+      const distance = 11 + Math.random() * 10;
+      chip.className = "chip";
+      chip.style.setProperty("--dx", `${(Math.cos(angle) * distance).toFixed(1)}px`);
+      chip.style.setProperty("--up", `${(Math.sin(angle) * distance).toFixed(1)}px`);
+      chip.style.setProperty("--fall", `${(8 + Math.random() * 9).toFixed(1)}px`);
+      chip.style.setProperty("--spin", `${Math.round((Math.random() - 0.5) * 400)}deg`);
+      chip.style.setProperty("--size", `${(2.2 + Math.random() * 1.8).toFixed(1)}px`);
+      chip.style.background = CHIP_COLORS[i % CHIP_COLORS.length];
+      debris.append(chip);
+    }
+    button.append(debris);
+    // 창이 가려져 있으면 animationend가 오지 않을 수 있어서 시간으로 지운다.
+    setTimeout(() => debris.remove(), 700);
+  }
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>(".theme-toggle")) {
+    let hitTimer: ReturnType<typeof setTimeout> | undefined;
+    const updateLabel = () => {
+      const current = currentTheme();
+      const next: Theme = current === "dark" ? "light" : "dark";
+      const following = currentPreference() === "system" ? " (시스템 설정)" : "";
+      button.setAttribute("aria-label", `지금은 ${LABEL[current]}${following}, 눌러서 ${LABEL[next]}로 바꾸기`);
+      button.title = `${LABEL[current]}${following}`;
+    };
+
+    watchSystemTheme(updateLabel);
+    document.addEventListener(THEME_EVENT, updateLabel);
+
+    button.addEventListener("click", () => {
+      toggleTheme();
+      updateLabel();
+
+      // 누를 때마다 아이콘을 한 대 친다. 그동안 손그림 모양도 꿈틀거린다. (global.css의 .boiling)
+      button.classList.remove("hit", "boiling");
+      void button.offsetWidth;
+      button.classList.add("hit", "boiling");
+      clearTimeout(hitTimer);
+      hitTimer = setTimeout(() => button.classList.remove("hit", "boiling"), 650);
+      if (!reducedMotion.matches) burst(button);
+    });
+
+    updateLabel();
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-title);
+    background: color-mix(in srgb, var(--color-border) 60%, transparent);
+  }
+
+  .icon {
+    display: none;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* 밑동을 붙잡고 맞은 것처럼, 아래쪽을 기준으로 찌그러졌다 늘어나며 출렁인다. */
+    .theme-toggle.hit .icon {
+      transform-origin: 50% 85%;
+      animation: squash 0.5s linear;
+    }
+
+    /* 맞는 순간 잠깐 번쩍인다. */
+    .theme-toggle.hit {
+      animation: flash 0.22s steps(1, end);
+    }
+
+  }
+
+  /* 부스러기는 스크립트가 넣는다. 위로 튀었다가(감속) 떨어지며(가속) 사라진다. */
+  .theme-toggle :global(.debris) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+  }
+
+  .theme-toggle :global(.chip) {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    margin: calc(var(--size) / -2);
+    border-radius: 1px;
+    animation: chip 0.6s both;
+  }
+
+  @keyframes squash {
+    0% {
+      transform: scale(1, 1);
+      animation-timing-function: ease-out;
+    }
+    12% {
+      transform: translateX(-1px) scale(1.32, 0.7);
+      animation-timing-function: ease-in-out;
+    }
+    30% {
+      transform: translateX(1px) scale(0.8, 1.24);
+    }
+    48% {
+      transform: scale(1.12, 0.9);
+    }
+    66% {
+      transform: scale(0.95, 1.05);
+    }
+    83% {
+      transform: scale(1.02, 0.98);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+
+  @keyframes flash {
+    0% {
+      color: var(--color-logo-dot);
+    }
+  }
+
+  @keyframes chip {
+    0% {
+      transform: translate(0, 0) rotate(0) scale(1);
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+    }
+    42% {
+      transform: translate(calc(var(--dx) * 0.6), var(--up)) rotate(calc(var(--spin) * 0.5));
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+    }
+    100% {
+      transform: translate(var(--dx), calc(var(--up) + var(--fall))) rotate(var(--spin)) scale(0.5);
+      opacity: 0;
+    }
+  }
+
+  :global(html[data-theme="light"]) .icon-light,
+  :global(html[data-theme="dark"]) .icon-dark {
+    display: block;
+  }
+</style>
