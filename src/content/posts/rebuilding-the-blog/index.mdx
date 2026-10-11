@@ -1,0 +1,72 @@
+---
+title: 블로그를 다시 만들기로 했다
+description: Next.js로 만들다 만 블로그를 Astro로 처음부터 다시 만드는 이유
+date: 2026-10-09
+tags: [Astro, 회고]
+---
+
+예전에 Next.js로 블로그를 만들다가 미완성인 상태로 중간에 멈췄었다. 이번에는 Astro로 다시 처음부터 만들기로 했다.
+
+## 왜 다시 만드나
+
+새로운 시도를 해보고 싶었다.
+
+글 목록에서 글의 첫 부분을 잘라서 미리보기로 보여주고, 첫 부분에 실행할 수 있는 데모가 있어도 잘 동작하게 하고 싶었다.
+
+무엇보다 기술적으로 구현할 게 적었으면 했고 경량화된 정적인 사이트를 원했기에, 기존에 쓰던 Next.js와 SvelteKit 대신 Astro가 적합해 보였다.
+
+> 글 목록에는 글 전체 내용이 전송되면 안 된다.
+
+첫 부분만 잘라서 클라이언트에게 보여줄 때, 내부적으로 글의 전체 내용이 전송되면 안 된다.
+
+Astro는 기본적으로 정적인 HTML을 렌더하고, 필요한 부분에만 JavaScript를 붙여 브라우저에서 동적으로 처리하게 할 수 있다. 이 방식을 [아일랜드 아키텍처](https://docs.astro.build/en/concepts/islands/)라고 부른다.
+
+Next.js와 SvelteKit도 비슷한 구현은 가능하지만, 더 적은 세팅과 코드로 만들 수 있었다.
+
+<Diagram
+  nodes={[
+    { id: "mdx", label: "MDX 글", col: 0, row: 0 },
+    { id: "plugin", label: "more 플러그인", col: 1, row: 0, tone: "accent" },
+    { id: "list", label: "글 목록", col: 2, row: 0, tone: "tip" },
+    { id: "post", label: "글 페이지", col: 2, row: 1 },
+  ]}
+  edges={[
+    { from: "mdx", to: "plugin" },
+    { from: "plugin", to: "list", label: "앞부분만" },
+    { from: "plugin", to: "post", label: "전체" },
+    { from: "list", to: "post", label: "더 읽기", dashed: true },
+  ]}
+  caption="글 하나가 목록과 글 페이지로 나뉘는 과정"
+/>
+
+## 이번에 정한 것
+
+1. 글은 MDX로 작성한다.
+2. 데모는 Svelte로 만들고, 나중에 필요할 때만 React를 쓴다.
+3. 사이트는 정적으로 빌드한다.
+
+### 설정은 이 정도
+
+```js
+import { defineConfig } from "astro/config";
+import mdx from "@astrojs/mdx";
+import svelte from "@astrojs/svelte";
+
+export default defineConfig({
+  integrations: [mdx(), svelte()],
+});
+```
+
+`more` 표시 앞까지만 목록에 보여주는 기능은 마크다운 플러그인으로 만든다.
+
+| 항목 | 예전 | 지금 |
+| --- | --- | --- |
+| 프레임워크 | Next.js | Astro |
+| 데모 | 없음 | Svelte |
+| 배포 | 서버 | 정적 파일 |
+
+예전 블로그 소개 페이지는 그대로 가져왔고, 전체적인 디자인을 약간의 게임 느낌 + 손그림 느낌으로 잡고 만들고 있다.
+
+---
+
+천천히, 하나씩 다듬어 갈 생각이다.
