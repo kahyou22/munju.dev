@@ -2,6 +2,7 @@
 // 글 위쪽의 날짜·태그 줄.
 import Tag from "./Tag.astro";
 import { formatDate, tagsWithPage } from "../lib/posts";
+import { roughAttrs } from "../lib/rough-decor";
 
 interface Props {
   date: Date;
@@ -14,10 +15,24 @@ const { date, tags, seed } = Astro.props;
 
 // 태그 페이지는 목록에 보이는 글의 태그로만 만든다. 일부 공개 글에만 있는 태그는 링크하지 않는다.
 const linkedTags = await tagsWithPage();
+
+// 옛 블로그처럼 올린 지 일주일이 안 된 글에 N을 단다.
+// 빌드할 때 붙여두고, 그 뒤로 시간이 지나 기한이 끝나면 브라우저에서 뗀다(scripts/new-badge.ts).
+const NEW_DAYS = 7;
+const newUntil = date.getTime() + NEW_DAYS * 24 * 60 * 60 * 1000;
+const isNew = Date.now() < newUntil;
 ---
 
 <div class="meta">
   <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  {
+    isNew && (
+      <span class="new" data-new-until={newUntil} {...roughAttrs({ kind: "box", fill: true, seed: `new-${seed}`, radius: 4, roughness: 0.6, maxRandomnessOffset: 0.6 })} title="새 글">
+        <span aria-hidden="true">N</span>
+        <span class="sr-only">새 글</span>
+      </span>
+    )
+  }
   {tags.map((tag) => <Tag name={tag} seed={`${seed}-${tag}`} link={linkedTags.has(tag)} />)}
 </div>
 
@@ -35,5 +50,40 @@ const linkedTags = await tagsWithPage();
 
   time {
     margin-right: 4px;
+  }
+
+  /* 흰 글자가 읽히도록 코랄을 진하게 쓴다. 어두운 테마에서는 밝은 코랄에 어두운 글자. */
+  .new {
+    --new-bg: #c2615c;
+    --new-text: #ffffff;
+    --rough-fill: var(--new-bg);
+    --rough-stroke: var(--new-bg);
+    --rough-stroke-width: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    color: var(--new-text);
+  }
+
+  :global(:root[data-theme="dark"]) .new {
+    --new-bg: #fda9a6;
+    --new-text: #383637;
+  }
+
+  .new > span {
+    position: relative;
+  }
+
+  .new:not([data-rough-ready]) {
+    border-radius: 4px;
+    background: var(--new-bg);
   }
 </style>
