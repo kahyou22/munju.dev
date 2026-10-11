@@ -3,6 +3,7 @@ import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "@fontsource/gaegu/400.css";
 import "@fontsource/gaegu/700.css";
 import "../styles/base.css";
+import "../styles/hand-drawn.css";
 import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
 import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../lib/site";
 import { themeTokensVersion } from "../lib/theme-tokens";
@@ -68,6 +69,9 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
       <span>© {new Date().getFullYear()} {SITE_TITLE}</span>
       <a href={AUTHOR.github}>GitHub</a>
     </footer>
+    <script>
+      import "../scripts/rough-decor";
+    </script>
   </body>
 </html>
 

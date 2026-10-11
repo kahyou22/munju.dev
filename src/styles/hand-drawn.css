@@ -1,0 +1,35 @@
+/*
+ * rough.js 손그림 장식 (src/lib/rough-decor.ts가 그린다)
+ * [data-rough] 요소 안에 <svg class="rough-decor">가 들어가고, 색은 아래 변수로 정한다.
+ * - --rough-stroke: 선 색, --rough-fill: 면 색, --rough-stroke-width: 선 굵기
+ * 크기가 화면에 따라 바뀌는 요소는 브라우저에서(scripts/rough-decor.ts), 크기가 정해진 그림은 빌드할 때 그린다.
+ */
+[data-rough] {
+  position: relative;
+  isolation: isolate;
+}
+
+.rough-decor {
+  position: absolute;
+  z-index: -1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rough-decor .rough-fill {
+  fill: var(--rough-fill, transparent);
+}
+
+.rough-decor .rough-stroke {
+  fill: none;
+  stroke: var(--rough-stroke, currentColor);
+  stroke-width: var(--rough-stroke-width, 1.5);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 손그림을 그리기 전(스크립트가 돌기 전)에는 면만 평범하게 칠해 둔다. */
+[data-rough-fill]:not([data-rough-ready]) {
+  background: var(--rough-fill);
+  border-radius: 8px;
+}
