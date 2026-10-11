@@ -1,0 +1,49 @@
+---
+title: 키보드 데모 테스트
+description: 방향키를 눌러보며 keydown과 keyup, repeat가 언제 발생하는지 확인하는 데모
+date: 2026-10-10
+tags: [Svelte, 키보드]
+---
+
+import KeyboardDemo from "./KeyboardDemo.svelte";
+import keyboardDemoSource from "./KeyboardDemo.svelte?raw";
+
+`keydown`과 `keyup`은 언제, 몇 번 발생할까요? 아래 데모를 클릭한 뒤 방향키를 눌러보세요. 키를 꾹 누르고 있으면 어떤 일이 생기는지도 확인해보세요.
+
+<DemoBox code={keyboardDemoSource} file="KeyboardDemo.svelte">
+  <KeyboardDemo client:visible />
+</DemoBox>
+
+{/* more */}
+
+## keydown은 여러 번, keyup은 한 번
+
+키를 누르고 있으면 운영체제의 키 반복 설정에 따라 `keydown`이 계속 발생합니다. 이때 두 번째부터는 `event.repeat`가 `true`예요. 반대로 `keyup`은 손을 뗄 때 딱 한 번만 발생합니다.
+
+게임처럼 "누르고 있는 동안" 상태가 필요하다면 `keydown`에서 키를 집합에 넣고 `keyup`에서 빼는 방식이 가장 단순합니다.
+
+```ts
+const pressed = new Set<string>();
+
+element.addEventListener("keydown", (event) => {
+  pressed.add(event.key);
+});
+
+element.addEventListener("keyup", (event) => {
+  pressed.delete(event.key);
+});
+```
+
+## 왜 window가 아니라 요소에 거나
+
+한 페이지에 데모가 여러 개 있으면 `window`에 건 이벤트는 모든 데모가 동시에 받습니다. 방향키나 스페이스로 페이지를 스크롤하는 것도 막혀버려요. 그래서 이 블로그의 데모는 이렇게 동작합니다.
+
+- 데모를 클릭해서 포커스가 생겨야 키 입력을 받습니다.
+- 포커스가 있을 때만 `preventDefault()`로 스크롤을 막습니다.
+- `Esc`를 누르거나 바깥을 클릭하면 포커스가 풀립니다.
+
+> 포커스가 어디 있는지 눈에 보여야 합니다. 데모 위쪽 문구가 "● 입력 중"으로 바뀌는 이유예요.
+
+## 정리
+
+`keydown`의 `repeat`를 확인하고, 이벤트는 포커스를 받을 수 있는 요소에 거는 게 좋습니다.
