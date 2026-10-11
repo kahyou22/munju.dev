@@ -20,7 +20,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} noindex={post.data.unlisted}>
+<BaseLayout title={post.data.title} description={post.data.description} published={post.data.date} tags={post.data.tags} noindex={post.data.unlisted}>
   <article>
     <header class="post-header">
       <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />
