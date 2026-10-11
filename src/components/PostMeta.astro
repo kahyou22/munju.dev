@@ -23,7 +23,7 @@ const newUntil = date.getTime() + NEW_DAYS * 24 * 60 * 60 * 1000;
 const isNew = Date.now() < newUntil;
 ---
 
-<div class="meta">
+<div class="meta" data-vt-meta>
   <time datetime={date.toISOString()}>{formatDate(date)}</time>
   {
     isNew && (

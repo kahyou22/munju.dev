@@ -12,9 +12,9 @@ const { post } = Astro.props;
 const href = postHref(post.id);
 ---
 
-<article class="preview">
+<article class="preview" data-post-path={href}>
   <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />
-  <h2 class="menu-cursor"><a href={href}><HandUnderline seed={post.id}>{post.data.title}</HandUnderline></a></h2>
+  <h2 class="menu-cursor"><a href={href}><HandUnderline seed={post.id} data-vt-title>{post.data.title}</HandUnderline></a></h2>
   <!-- 미리보기 안에는 데모가 있을 수 있어서, 이 영역 전체를 링크로 감싸지 않는다. -->
   <div class="prose excerpt">
     <slot />

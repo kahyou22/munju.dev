@@ -32,7 +32,7 @@ const { Content } = await render(post);
   <article>
     <header class="post-header">
       <PostMeta date={post.data.date} tags={post.data.tags} seed={post.id} />
-      <h1><HandUnderline seed={post.id}>{post.data.title}</HandUnderline></h1>
+      <h1><HandUnderline seed={post.id} data-vt-title>{post.data.title}</HandUnderline></h1>
     </header>
     <div class="prose">
       <Content components={fullComponents} />
@@ -43,6 +43,15 @@ const { Content } = await render(post);
 <style>
   .post-header {
     margin-bottom: 40px;
+  }
+
+  /* 목록에서 고른 글의 제목과 날짜·태그 줄이 여기로 이어진다. (scripts/page-transition.js) */
+  .post-header :global([data-vt-meta]) {
+    view-transition-name: post-meta;
+  }
+
+  h1 :global([data-vt-title]) {
+    view-transition-name: post-title;
   }
 
   h1 {

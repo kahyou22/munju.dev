@@ -13,9 +13,9 @@ const { posts } = Astro.props;
 <ol class="index">
   {
     posts.map((post) => (
-      <li>
+      <li data-post-path={postHref(post.id)}>
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-        <a class="title draw-underline menu-cursor" href={postHref(post.id)}>
+        <a class="title draw-underline menu-cursor" href={postHref(post.id)} data-vt-title>
           {post.data.title}
         </a>
         {post.data.description && <p>{post.data.description}</p>}
