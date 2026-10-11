@@ -6,6 +6,7 @@ import "../styles/base.css";
 import "../styles/hand-drawn.css";
 import "../styles/rule.css";
 import "../styles/paper.css";
+import "../styles/underline.css";
 import WobbleFilters from "../components/WobbleFilters.astro";
 import Rule from "../components/Rule.astro";
 import { THEME_AGAINST_KEY, THEME_EVENT, THEME_STORAGE_KEY } from "../lib/theme";
@@ -73,7 +74,7 @@ const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
     <footer class="container site-footer" id="site-footer">
       <Rule seed="footer" />
       <span>© {new Date().getFullYear()} {SITE_TITLE}</span>
-      <a href={AUTHOR.github}>GitHub</a>
+      <a class="draw-underline" href={AUTHOR.github}>GitHub</a>
     </footer>
     <script>
       import "../scripts/rough-decor";

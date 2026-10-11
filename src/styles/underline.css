@@ -1,0 +1,45 @@
+/*
+ * 마우스를 올리면 손그림 밑줄이 왼쪽부터 나타나고, 떼면 왼쪽부터 먼지처럼 부서지며 사라진다.
+ * 밑줄은 늘 그려져 있고, 그 위를 바탕색(--surface) 덮개가 가렸다 걷었다 한다.
+ * - 올릴 때: 반듯한 덮개가 오른쪽에 붙은 채 줄어든다 → 왼쪽부터 깔끔하게 드러남
+ * - 뗄 때: 끝이 흩어진 덮개(--dust-cover)가 왼쪽에 붙은 채 늘어난다 → 왼쪽부터 갉아먹히듯 사라짐
+ *   흩어진 끝(--dust-edge)이 평소에는 보이지 않도록 덮개를 그만큼 더 길게 둔다.
+ * 층 순서: 늘 깔리는 연한 밑줄(--underline-base, 본문 링크만) / 덮개 / 진한 밑줄(--draw-line)
+ * 밑줄 그림과 덮개는 theme-tokens.css에서 온다. (src/lib/rough-images.ts)
+ */
+:root {
+  --underline-h: 6px;
+  /* 날리는 먼지(scripts/dust.ts)도 이 값을 읽어 속도를 맞춘다. */
+  --underline-sweep: 0.35s;
+  /* 지금 바탕. 덮개가 이 색이어야 바탕에 묻힌다. 색이 있는 상자(콜아웃)는 둘 다 자기 것으로 바꾼다. */
+  --surface: var(--color-bg);
+  --dust-cover: var(--dust-cover-page);
+}
+
+.draw-underline {
+  --dust-color: var(--color-link);
+  padding-bottom: var(--underline-pad, 3px);
+  background:
+    var(--underline-base, none) repeat-x left bottom / var(--link-faint-w, 0px) var(--underline-h),
+    var(--dust-cover) no-repeat left bottom / calc(100% + var(--dust-edge)) var(--underline-h),
+    var(--draw-line, var(--link-draw)) no-repeat left bottom / 100% var(--underline-h);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--underline-sweep) ease-out;
+}
+
+.draw-underline:is(:hover, :focus-visible) {
+  text-decoration: none;
+  background-image: var(--underline-base, none), linear-gradient(var(--surface), var(--surface)), var(--draw-line, var(--link-draw));
+  background-position: left bottom, right bottom, left bottom;
+  background-size:
+    var(--link-faint-w, 0px) var(--underline-h),
+    0% var(--underline-h),
+    100% var(--underline-h);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-underline {
+    transition: none;
+  }
+}
