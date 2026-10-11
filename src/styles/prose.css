@@ -120,6 +120,36 @@
   border-radius: 7px 3px 6px 4px / 3px 7px 4px 6px;
 }
 
+/* 코드 블록: <pre>는 가로로 스크롤되므로 배경과 손그림 테두리는 바깥 .code-block에 그린다. (rough-markup.mjs) */
+.prose .code-block {
+  --rough-fill: var(--code-bg);
+  --rough-stroke: var(--color-border-strong);
+  --rough-stroke-width: 1;
+  margin: 1.6em 0;
+}
+
+.prose pre {
+  position: relative;
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: transparent !important;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  font-family: inherit;
+}
+
+/* Shiki 듀얼 테마: 다크에서는 --shiki-dark 색을 쓴다. (src/lib/shiki-themes.mjs) */
+[data-theme="dark"] .prose pre,
+[data-theme="dark"] .prose pre span {
+  color: var(--shiki-dark) !important;
+}
+
 /* 표: 칸마다 아래에 손그림 선 (rough-markup.mjs) */
 .prose table {
   width: 100%;

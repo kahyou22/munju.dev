@@ -7,6 +7,7 @@ import svelte from '@astrojs/svelte';
 
 import { moreMarkerPlugin } from './src/lib/more-marker.mjs';
 import { roughMarkupPlugin } from './src/lib/rough-markup.mjs';
+import { latencyDark, latencyLight } from './src/lib/shiki-themes.mjs';
 import { excerptPlugin } from './src/lib/excerpt-vite-plugin.mjs';
 
 // https://astro.build/config
@@ -31,5 +32,9 @@ export default defineConfig({
     // - more-marker: 글 페이지에서 미리보기가 끝나는 자리에 #more 앵커를 둔다.
     // - rough-markup: 인용문·표 같은 요소에 손그림 장식(data-rough)을 붙인다.
     processor: satteri({ mdastPlugins: [moreMarkerPlugin], hastPlugins: [roughMarkupPlugin] }),
+    shikiConfig: {
+      // 블로그 팔레트로 만든 코드 색. 다크 테마 색은 --shiki-dark 변수로 들어가고 prose.css에서 전환한다.
+      themes: { light: latencyLight, dark: latencyDark },
+    },
   },
 });
