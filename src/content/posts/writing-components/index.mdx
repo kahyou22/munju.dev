@@ -6,6 +6,8 @@ tags: [블로그, 견본]
 unlisted: true
 ---
 
+import cat from "./cat.jpg";
+
 글을 쓸 때 쓸 수 있는 컴포넌트를 모아둔 견본 글이다. 일부 공개 글이라 목록에는 없고 링크로만 들어올 수 있다. 모든 컴포넌트는 import 없이 바로 쓸 수 있다.
 
 {/* more */}
@@ -62,6 +64,18 @@ unlisted: true
 <Aside>이렇게 옆에 적힌다.</Aside>
 
 메모를 달고 싶은 문단.
+```
+
+## Figure
+
+글에 사진을 넣는 액자다. 사진 위에 살짝 어긋난 흰 선을 두 번 긋고, 바깥에 포인트 색 스케치 선을 하나 더 둔다. 캡션은 손글씨로 붙는다. 사진은 글 폴더에 두고 import한다.
+
+<Figure src={cat} alt="위를 올려다보는 흰 고양이" caption="예전 블로그에서 데려온 고양이" />
+
+```mdx
+import cat from "./cat.jpg";
+
+<Figure src={cat} alt="위를 올려다보는 흰 고양이" caption="캡션" />
 ```
 
 ## 코드 블록

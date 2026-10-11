@@ -1,0 +1,96 @@
+---
+// 글에 넣는 이미지 액자. MV 장면처럼 사진 위에 살짝 어긋난 흰 선을 두 번 긋고,
+// 바깥에는 포인트 색 스케치 선을 하나 더 둔다. 캡션은 손글씨.
+// MDX에서는 import 없이 <Figure src={...} alt="..." caption="..." />로 쓴다.
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { between } from "../lib/hand-drawn";
+import { roughAttrs } from "../lib/rough-decor";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  seed?: string;
+}
+
+const { src, alt, caption, seed = alt } = Astro.props;
+
+const inset = (salt: string) => `${between(seed, 6, 13, salt).toFixed(1)}px`;
+const style = [
+  `--inner-2-inset: ${inset("top")} ${inset("right")} ${inset("bottom")} ${inset("left")}`,
+  `--outer-shift-x: ${between(seed, 3, 7, "x").toFixed(1)}px`,
+  `--outer-shift-y: ${between(seed, -6, -2, "y").toFixed(1)}px`,
+].join("; ");
+---
+
+<figure class="figure" style={style}>
+  <div class="frame">
+    <span class="line outer" {...roughAttrs({ kind: "box", seed: `${seed}:outer`, radius: 12 })} aria-hidden="true"></span>
+    <Image src={src} alt={alt} />
+    <span class="line inner-1" {...roughAttrs({ kind: "box", seed: `${seed}:inner-1`, radius: 9 })} aria-hidden="true"></span>
+    <span class="line inner-2" {...roughAttrs({ kind: "box", seed: `${seed}:inner-2`, radius: 10 })} aria-hidden="true"></span>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .figure {
+    margin: 2em 0;
+  }
+
+  .frame {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .frame :global(img) {
+    position: relative;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  /* 손그림 선은 rough-decor가 그린다. 바깥은 포인트 색, 사진 위는 흰 선 두 겹 */
+  .line {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .outer {
+    --rough-stroke: var(--color-accent);
+    --rough-stroke-width: 1.25;
+    inset: 0;
+    opacity: 0.7;
+    transform: translate(var(--outer-shift-x), var(--outer-shift-y));
+  }
+
+  .inner-1,
+  .inner-2 {
+    --rough-stroke: #fefefe;
+    --rough-stroke-width: 1;
+  }
+
+  .inner-1 {
+    inset: 8px;
+    opacity: 0.85;
+  }
+
+  .inner-2 {
+    inset: var(--inner-2-inset);
+    opacity: 0.45;
+  }
+
+  figcaption {
+    margin-top: 12px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 17px;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--color-muted);
+  }
+</style>
