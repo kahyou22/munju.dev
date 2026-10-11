@@ -6,6 +6,7 @@ import { POSTS_DIR, postIdFromEntry } from "./lib/post-id.mjs";
 // 글은 src/content/posts 아래에 둔다.
 // - 파일 하나: posts/hello.mdx → /posts/hello/
 // - 데모와 함께 폴더로: posts/keyboard-events/index.mdx → /posts/keyboard-events/
+// - 초안: posts/_drafts/ 안에 같은 방식으로. 커밋되지 않고 개발 서버에서만 보인다. (src/lib/post-id.mjs)
 const posts = defineCollection({
   loader: glob({
     pattern: "**/*.mdx",

@@ -1,14 +1,15 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { isInDrafts } from "./post-id.mjs";
 
 export type Post = CollectionEntry<"posts">;
 
 /**
  * 페이지를 만드는 모든 글. 최신 글이 앞에 온다. 같은 날짜면 id 순이라 빌드할 때마다 순서가 같다.
  * (같은 날 여러 글을 쓰면 date에 시간까지 적으면 시간 순이 된다)
- * 초안은 개발 서버에서만 보이고, 일부 공개 글은 들어간다.
+ * 초안(`draft: true`나 초안 폴더의 글)은 개발 서버에서만 보이고, 일부 공개 글은 들어간다.
  */
 export async function getPosts(): Promise<Post[]> {
-  const posts = await getCollection("posts", ({ data }) => import.meta.env.DEV || !data.draft);
+  const posts = await getCollection("posts", ({ data, filePath }) => import.meta.env.DEV || !(data.draft || isInDrafts(filePath)));
   return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.id.localeCompare(b.id));
 }
 
