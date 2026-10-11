@@ -2,7 +2,11 @@
 import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
+import { satteri } from '@astrojs/markdown-satteri';
 import svelte from '@astrojs/svelte';
+
+import { moreMarkerPlugin } from './src/lib/more-marker.mjs';
+import { excerptPlugin } from './src/lib/excerpt-vite-plugin.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +16,8 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [mdx(), svelte()],
   vite: {
+    // 글 목록용 미리보기 모듈(`글.mdx?excerpt`)을 만든다. src/lib/excerpt-vite-plugin.mjs 참고
+    plugins: [excerptPlugin()],
     build: {
       // 작은 글꼴 조각이 CSS 안에 base64로 박히지 않게 한다. 박히면 모든 페이지가 처음에 받는 CSS가
       // 쓰지도 않는 글꼴(옛 woff 포함)까지 품어서 수백 KB가 된다. 글꼴은 파일로 두고 필요한 것만 받게 한다.
@@ -20,4 +26,8 @@ export default defineConfig({
   },
   // 링크에 마우스를 올렸을 때만 다음 페이지를 미리 불러온다. (글 목록에 전체 글이 미리 전송되지 않게)
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
+  markdown: {
+    // 글 페이지에서 미리보기가 끝나는 자리에 #more 앵커를 둔다. (src/lib/more-marker.mjs)
+    processor: satteri({ mdastPlugins: [moreMarkerPlugin] }),
+  },
 });

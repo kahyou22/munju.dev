@@ -1,0 +1,31 @@
+---
+// 글 위쪽의 날짜 줄. (태그와 N 표시는 태그 기능을 옮길 때 더한다)
+import { formatDate } from "../lib/posts";
+
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+---
+
+<div class="meta">
+  <time datetime={date.toISOString()}>{formatDate(date)}</time>
+</div>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+
+  time {
+    margin-right: 4px;
+  }
+</style>

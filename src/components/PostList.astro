@@ -1,0 +1,67 @@
+---
+// 글 목록 한 페이지. 홈(/)이 1페이지이고, 그 뒤는 /page/2, /page/3 ...이다.
+import PostPreview from "./PostPreview.astro";
+import Pagination from "./Pagination.astro";
+import Rule from "./Rule.astro";
+import { excerptComponents } from "./mdx";
+import { getPosts, pageCount, POSTS_PER_PAGE } from "../lib/posts";
+
+interface Props {
+  page: number;
+}
+
+const { page } = Astro.props;
+
+// 미리보기는 원본에서 `more` 앞부분만 잘라 만든 별도 모듈로 그린다. (src/lib/excerpt-vite-plugin.mjs)
+// 그래서 이 페이지에는 글 뒷부분이 컴파일조차 되지 않는다. 이 페이지에 나오는 글의 미리보기만 불러온다.
+const excerpts = import.meta.glob<{ default: (props: Record<string, unknown>) => unknown }>("/src/content/posts/**/*.mdx", {
+  query: "?excerpt",
+});
+
+const posts = await getPosts();
+const total = pageCount(posts.length);
+const pagePosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
+const previews = await Promise.all(
+  pagePosts.map(async (post) => {
+    const load = excerpts[`/${post.filePath}`];
+    if (!load) throw new Error(`미리보기 모듈을 찾을 수 없어요: ${post.filePath}`);
+    return { post, Excerpt: (await load()).default };
+  }),
+);
+---
+
+<div class="list">
+  {previews.length === 0 && <p class="empty">아직 글이 없어요.</p>}
+  {
+    previews.map(({ post, Excerpt }, index) => (
+      <>
+        {index > 0 && <Rule seed={`between-${post.id}`} />}
+        <PostPreview post={post}>
+          <Excerpt components={excerptComponents} />
+        </PostPreview>
+      </>
+    ))
+  }
+</div>
+{
+  total > 1 && (
+    <>
+      <Rule seed={`pages-${page}`} />
+      <Pagination current={page} total={total} />
+    </>
+  )
+}
+
+<style>
+  .list {
+    margin-top: -36px;
+  }
+
+  .empty {
+    margin: 36px 0 0;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 19px;
+    color: var(--color-muted);
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+import PostMeta from "./PostMeta.astro";
+import { postHref, type Post } from "../lib/posts";
+import HandUnderline from "./HandUnderline.astro";
+import HandArrow from "./HandArrow.astro";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const href = postHref(post.id);
+---
+
+<article class="preview">
+  <PostMeta date={post.data.date} />
+  <h2 class="menu-cursor"><a href={href}><HandUnderline seed={post.id}>{post.data.title}</HandUnderline></a></h2>
+  <!-- 미리보기 안에는 데모가 있을 수 있어서, 이 영역 전체를 링크로 감싸지 않는다. -->
+  <div class="prose excerpt">
+    <slot />
+  </div>
+  <a class="read-more draw-underline menu-cursor" href={`${href}#more`}>더 읽기<HandArrow seed={post.id} /></a>
+</article>
+
+<style>
+  .preview {
+    padding-block: 36px;
+  }
+
+  h2 {
+    /* 선택 커서는 첫 줄 가운데에 */
+    --cursor-top: 0.7em;
+    --cursor-gap: 22px;
+    margin: 8px 0 12px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  h2 a {
+    color: var(--color-title);
+  }
+
+  h2 a:hover {
+    text-decoration: none;
+  }
+
+  .excerpt {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .read-more {
+    --cursor-gap: 18px;
+    display: inline-block;
+    margin-top: 16px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 17px;
+  }
+</style>

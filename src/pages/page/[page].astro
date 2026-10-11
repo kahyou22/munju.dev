@@ -1,0 +1,18 @@
+---
+// 글 목록 2페이지부터. 1페이지는 홈(/)이라 /page/1은 만들지 않는다.
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostList from "../../components/PostList.astro";
+import { getPosts, pageCount } from "../../lib/posts";
+
+export const getStaticPaths = (async () => {
+  const total = pageCount((await getPosts()).length);
+  return Array.from({ length: total - 1 }, (_, i) => ({ params: { page: String(i + 2) } }));
+}) satisfies GetStaticPaths;
+
+const page = Number(Astro.params.page);
+---
+
+<BaseLayout title={`글 목록 ${page}쪽`}>
+  <PostList page={page} />
+</BaseLayout>

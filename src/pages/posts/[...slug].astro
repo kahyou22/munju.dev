@@ -1,0 +1,47 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import HandUnderline from "../../components/HandUnderline.astro";
+import { fullComponents } from "../../components/mdx";
+import { getPosts, type Post } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article>
+    <header class="post-header">
+      <PostMeta date={post.data.date} />
+      <h1><HandUnderline seed={post.id}>{post.data.title}</HandUnderline></h1>
+    </header>
+    <div class="prose">
+      <Content components={fullComponents} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    margin: 10px 0 0;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    color: var(--color-title);
+  }
+</style>

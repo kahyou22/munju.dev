@@ -1,0 +1,26 @@
+---
+// 줄마다 손으로 그은 듯한 밑줄. rough.js로 제목마다 다른 선을 만들고, 시작 위치도 다르게 한다.
+import { between } from "../lib/hand-drawn";
+import { handLine } from "../lib/rough-images";
+import { palette } from "../lib/palette";
+
+interface Props {
+  seed: string;
+  [attribute: `data-${string}`]: unknown;
+}
+
+const { seed, ...rest } = Astro.props;
+const line = handLine({ seed: `underline:${seed}`, color: palette.light.accent, width: 260, height: 8, strokeWidth: 1.7, opacity: 0.8, repeat: true });
+const style = `--underline: ${line}; --underline-offset: -${between(seed, 0, 200, "offset").toFixed(0)}px`;
+---
+
+<span class="hand-underline" style={style} {...rest}><slot /></span>
+
+<style>
+  .hand-underline {
+    padding-bottom: 4px;
+    background: var(--underline) repeat-x var(--underline-offset) bottom / 260px 8px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+</style>

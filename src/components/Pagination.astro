@@ -1,0 +1,135 @@
+---
+// 글 목록 아래의 "← 이전 · 1 2 3 · 다음 →". 지금 페이지 번호는 손으로 그린 동그라미로 감싼다.
+import HandArrow from "./HandArrow.astro";
+import { pageHref } from "../lib/posts";
+import { roughAttrs } from "../lib/rough-decor";
+
+interface Props {
+  current: number;
+  total: number;
+}
+
+const { current, total } = Astro.props;
+
+// 첫·마지막 페이지와 지금 페이지 앞뒤만 번호로 보이고, 그 사이는 …로 줄인다.
+// 하나만 건너뛰는 자리는 …보다 번호를 그대로 보여주는 게 짧다.
+function items(): (number | null)[] {
+  const keep = [...new Set([1, current - 1, current, current + 1, total])].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out: (number | null)[] = [];
+  for (const n of keep) {
+    const last = out.at(-1);
+    if (typeof last === "number" && n - last === 2) out.push(last + 1);
+    else if (typeof last === "number" && n - last > 2) out.push(null);
+    out.push(n);
+  }
+  return out;
+}
+---
+
+<nav class="pagination" aria-label="글 목록 페이지">
+  <span class="side">
+    {
+      current > 1 && (
+        <a class="step draw-underline" href={pageHref(current - 1)} rel="prev">
+          <HandArrow seed={`prev-${current}`} direction="left" />
+          이전
+        </a>
+      )
+    }
+  </span>
+  <ol class="pages">
+    {
+      items().map((n) =>
+        n === null ? (
+          <li class="gap" aria-hidden="true">
+            …
+          </li>
+        ) : n === current ? (
+          <li>
+            <span class="page current" aria-current="page" {...roughAttrs({ kind: "ellipse", seed: `page-${n}`, inset: -2, roughness: 1 })}>
+              {n}
+            </span>
+          </li>
+        ) : (
+          <li>
+            <a class="page draw-underline menu-cursor" href={pageHref(n)} aria-label={`${n}쪽`}>
+              {n}
+            </a>
+          </li>
+        ),
+      )
+    }
+  </ol>
+  <span class="side next">
+    {
+      current < total && (
+        <a class="step draw-underline" href={pageHref(current + 1)} rel="next">
+          다음
+          <HandArrow seed={`next-${current}`} />
+        </a>
+      )
+    }
+  </span>
+</nav>
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 0 8px;
+    font-family: var(--font-hand);
+    letter-spacing: var(--hand-tracking);
+    font-size: 19px;
+  }
+
+  .next {
+    justify-self: end;
+  }
+
+  .step {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .pages {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    color: var(--color-muted);
+  }
+
+  a.page:hover {
+    color: var(--color-link);
+  }
+
+  /* 번호 칸 안쪽 왼쪽에 작은 커서 */
+  a.page {
+    --cursor-size: 9px;
+    --cursor-gap: 0px;
+  }
+
+  .current {
+    --rough-stroke: var(--color-logo-dot);
+    --rough-stroke-width: 1.4;
+    font-weight: 700;
+    color: var(--color-title);
+  }
+
+  .gap {
+    color: var(--color-faint);
+  }
+</style>

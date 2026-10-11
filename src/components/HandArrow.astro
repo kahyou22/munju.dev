@@ -1,0 +1,58 @@
+---
+// 손으로 그린 화살표. 기본은 오른쪽이고, 감싼 링크에 마우스를 올리면 가리키는 쪽으로 살짝 나간다.
+import { roughPath } from "../lib/rough";
+
+interface Props {
+  seed?: string;
+  /** left면 좌우로 뒤집어서 왼쪽을 가리킨다. 글자 앞에 둔다. */
+  direction?: "left" | "right";
+}
+
+const { seed = "arrow", direction = "right" } = Astro.props;
+const strokes = roughPath("M1.5 6.6 C7 5.7 13 6.9 20.5 6.1 M16 2.3 C18 3.9 19.6 5 21.4 6.1 C19.5 7.3 17.9 8.6 16.4 10.1", `arrow:${seed}`, {
+  roughness: 0.6,
+  maxRandomnessOffset: 0.7,
+}).strokes;
+---
+
+<svg class:list={["hand-arrow", direction]} viewBox="0 0 24 12" aria-hidden="true">
+  {strokes.map((d) => <path d={d} />)}
+</svg>
+
+<style>
+  .hand-arrow {
+    display: inline-block;
+    width: 1.25em;
+    height: 0.65em;
+    margin-left: 0.2em;
+    vertical-align: 0.05em;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease-out;
+  }
+
+  :global(a:hover) > .hand-arrow,
+  :global(a:focus-visible) > .hand-arrow {
+    transform: translateX(4px);
+  }
+
+  .left {
+    margin: 0 0.2em 0 0;
+    transform: scaleX(-1);
+  }
+
+  :global(a:hover) > .left,
+  :global(a:focus-visible) > .left {
+    transform: translateX(-4px) scaleX(-1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hand-arrow {
+      transition: none;
+    }
+  }
+</style>
