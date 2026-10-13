@@ -61,6 +61,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* 스크롤바 자리를 늘 비워 둔다. 스크롤이 있는 페이지와 없는 페이지를 오갈 때 화면 폭이 바뀌어
+     가운데 정렬된 내용이 좌우로 흔들리지 않게 한다. (스크롤바가 떠서 보이는 환경에서는 아무 일도 없다) */
+  scrollbar-gutter: stable;
 }
 
 body {
