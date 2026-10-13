@@ -1,5 +1,6 @@
 ---
 // 손으로 그린 화살표. 기본은 오른쪽이고, 감싼 링크에 마우스를 올리면 가리키는 쪽으로 살짝 나간다.
+// 링크를 눌러 페이지를 떠나는 동안(a.leaving, scripts/page-transition.js)에도 나간 자리에 그대로 있다.
 import { roughPath } from "../lib/rough";
 
 interface Props {
@@ -36,8 +37,14 @@ const strokes = roughPath("M1.5 6.6 C7 5.7 13 6.9 20.5 6.1 M16 2.3 C18 3.9 19.6 
   }
 
   :global(a:hover) > .hand-arrow,
-  :global(a:focus-visible) > .hand-arrow {
+  :global(a:focus-visible) > .hand-arrow,
+  :global(a.leaving) > .hand-arrow {
     transform: translateX(4px);
+  }
+
+  /* 누르자마자 다른 페이지로 넘어가므로, 나가던 중이면 그 자리까지 바로 간다. (반쯤 나간 채로 멈춰 보이지 않게) */
+  :global(a.leaving) > .hand-arrow {
+    transition: none;
   }
 
   .left {
@@ -46,7 +53,8 @@ const strokes = roughPath("M1.5 6.6 C7 5.7 13 6.9 20.5 6.1 M16 2.3 C18 3.9 19.6 
   }
 
   :global(a:hover) > .left,
-  :global(a:focus-visible) > .left {
+  :global(a:focus-visible) > .left,
+  :global(a.leaving) > .left {
     transform: translateX(-4px) scaleX(-1);
   }
 

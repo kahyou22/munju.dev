@@ -7,6 +7,8 @@
 //   그래서 읽던 글이 그 자리에 그대로 있고, 그 아래로 나머지가 이어진다.
 //   (스크립트가 없으면 링크의 #more로 평소처럼 이동한다)
 // - 화면 밖에 있던 요소는 날아오지 않게 이름을 뗀다. (헤더는 스크롤을 따라오지 않아서 화면 밖일 때가 많다)
+// - 손그림 화살표가 있는 링크("더 읽기 →" 등)를 누르면, 페이지가 바뀌는 동안 화살표를 나간 자리에 붙잡아 둔다.
+//   화살표는 마우스를 올린 동안(:hover)만 나가 있어서, 전환이 이전 화면을 찍을 때 그게 풀리면 제자리로 툭 돌아가 보인다.
 //
 // pagereveal은 새 페이지가 처음 그려지기 직전에 오므로, 늦게 실행되는 모듈 스크립트가 아니라 <head>에 둔다.
 (() => {
@@ -88,6 +90,24 @@
     if (document.readyState === "complete") addHash();
     else addEventListener("load", addHash, { once: true });
   }
+
+  /** 다른 페이지로 가는 링크인지. 같은 페이지 안의 #이동이나 새 탭은 페이지가 바뀌지 않는다. */
+  function leavesPage(link) {
+    if (link.target && link.target !== "_self") return false;
+    const url = new URL(link.href);
+    return url.origin === location.origin && (url.pathname !== location.pathname || url.search !== location.search);
+  }
+
+  addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest?.("a[href]");
+    if (link?.querySelector(":scope > .hand-arrow") && leavesPage(link)) link.classList.add("leaving");
+  });
+
+  // 뒤로 가기로 돌아오면(bfcache) 화살표를 제자리로 돌려 둔다.
+  addEventListener("pageshow", (event) => {
+    if (event.persisted) for (const link of document.querySelectorAll("a.leaving")) link.classList.remove("leaving");
+  });
 
   // 목록에서 "더 읽기"를 누르면 미리보기가 끝나는 높이를 기억해 두고 글로 간다.
   // 주소에 #more가 있으면 브라우저가 그 위치로 스스로 스크롤해서 맞춘 높이를 덮어쓰므로, #more를 빼고 이동한다.
