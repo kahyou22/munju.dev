@@ -47,7 +47,7 @@ const path = Astro.url.pathname;
     <nav aria-label="주요 메뉴">
       {
         NAV.map((item) => (
-          <a href={item.href} class:list={["nav-link", "menu-cursor", item.match(path) ? "active" : "draw-underline"]} aria-current={item.match(path) ? "page" : undefined}>
+          <a href={item.href} class:list={["nav-link", item.match(path) ? "active" : "draw-underline"]} aria-current={item.match(path) ? "page" : undefined}>
             {item.label}
             {item.match(path) && (
               <svg class="squiggle" viewBox="0 0 22 8" aria-hidden="true">
@@ -168,8 +168,6 @@ const path = Astro.url.pathname;
   }
 
   .nav-link {
-    --cursor-size: 10px;
-    --cursor-gap: 14px;
     --draw-line: var(--nav-draw);
     --dust-color: var(--color-highlight);
     position: relative;
